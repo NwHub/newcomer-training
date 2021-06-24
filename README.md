@@ -84,6 +84,8 @@ https://github.com/NwHub/newcomer-training/issues
 
 - [https://paiza.jp/works](https://paiza.jp/works)
 
+- [https://paiza.jp/paiza_game_history](https://paiza.jp/paiza_game_history)
+
 ## 案 3:誰か考えたサービスをみんなで作る
 
 - 72 時間は必要
