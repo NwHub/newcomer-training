@@ -12,8 +12,28 @@ https://github.com/NwHub/newcomer-training/issues
 
 ## 導入
 
+
 ## GitHub 登録
+
 
 ## Paiza Cloud 登録
 
 ## Node.js で JavaScript を実行
+### 作業ディレクトリとjsファイルを作成
+
+```Shell
+touch test.js
+```
+
+test.js
+```javascript
+console.log("YouTube");
+```
+
+```Shell
+node test.js
+```
+
+## lesson01--
+
+###
