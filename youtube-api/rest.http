@@ -1,0 +1,10 @@
+GET https://www.googleapis.com/youtube/v3/videos?key=AIzaSyBSikAMN12xdJYKo5ehLIwZ8aHJarao9qI&id=dVTLXKwgzjc,_sVsBTq8qTc&part=snippet,contentDetails,statistics
+
+###
+GET https://www.googleapis.com/youtube/v3/search?key=AIzaSyBSikAMN12xdJYKo5ehLIwZ8aHJarao9qI&channelId=UCSkLRGGIGKOtinamhcy_42g&part=snippet&order=date&type=video
+
+###
+,contentDetails
+
+###
+、 fileDetails、 liveStreamingDetails、 player、 processingDetails、 recordingDetails、 statistics、 status、 suggestions、 topicDetails

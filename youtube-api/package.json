@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "json-server": "json-server --watch youtube.json"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "json-server": "^0.16.3"
+  }
+}
