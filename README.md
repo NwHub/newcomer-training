@@ -24,26 +24,129 @@ https://github.com/NwHub/newcomer-training/issues
 touch test.js
 ```
 
+### JS ファイルに処理を記述
+
 test.js
 
 ```javascript
 console.log("YouTube");
 ```
 
+### JS ファイルを実行
+
 ```Shell
 node test.js
 ```
 
-## lesson01-axios を使って YouTubeAPI に接続-
+```shell
+YouTube
+```
+
+## lesson01 -axios を使って YouTubeAPI に接続-
+
+---
 
 ### 使用する YouTubeAPI の説明
 
-### axios のインストール
+---
+
+### GitHub からプロジェクトをクローン
+
+コードフォーマットの設定などがしてありますが、0 から作るのとほぼ変わりません。
+
+メモ：
+
+- 使用する技術
+  - Git
+- 公式ページ
+  - [Axios](https://axios-http.com/)
+
+```Shell
+git clone https://github.com/NwHub/youtube-api.git
+```
+
+クローンしたプロジェクトに移動
+
+```Shell
+cd youtube-api
+```
+
+`npm install`でパッケージダウンロード
+
+```shell
+npm install
+```
+
+---
+
+### Axios の導入
+
+プロジェクトルートで`npm install axios`を実行してインストール
+
+メモ：
+
+- 使用する技術
+  - node
+  - npm
+- 公式ページ
+  - [Axios](https://axios-http.com/)
+
+```Shell
+npm install axios
+```
+
+`package.json`を確認すると導入されたことが確認できる
+
+```json
+"dependencies": {
+    "axios": "^0.21.1"
+}
+```
+
+---
 
 ### API に接続
 
+メモ：
+
+- 使用する技術
+  - 変数定義
+  - 文字列結合
+  - console.log
+
+youtube.js
+
+```javascript
+const axios = require("axios");
+
+// YouTube API KEY
+const API_KEY = "";
+
+const videoId = "2dldq7XQdIo";
+const response = await axios.get(
+  `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoId}&part=snippet`
+);
+console.log(response.data);
 ```
 
+---
+
+### json-server を使用する
+
+YouTubeApi はクォータと呼ばれる使用制限があるため、json-server を利用しモックデータを取得するようにする。
+
+新しくターミナルを立ち上げて、json-server を起動する
+
+```shell
+npm run json-server
+```
+
+---
+
+### フォーマット
+
+```shell
+npm run format
 ```
 
 ## lesson02-動画情報を取得-
@@ -63,5 +166,3 @@ node test.js
 ###
 
 ## lesson06-画面表示-
-
-###

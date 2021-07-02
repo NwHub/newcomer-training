@@ -10,7 +10,8 @@ const BASE_URL = "https://www.googleapis.com/youtube/v3";
 // const BASE_URL = "http://localhost:3000";
 
 // YouTube API KEY
-const KEY = "AIzaSyBSikAMN12xdJYKo5ehLIwZ8aHJarao9qI";
+// const KEY = "AIzaSyBSikAMN12xdJYKo5ehLIwZ8aHJarao9qI";
+const KEY = "AIzaSyAlK6jX7vh3uAaV2M0E_mncRt85fx5ote0";
 
 // 返却値
 // {
@@ -54,7 +55,7 @@ async function getVideoIdMultiList(channelId) {
         params: {
           key: KEY,
           channelId: channelId,
-          part: "snippet",
+          part: "id",
           order: "date",
           type: "video",
           maxResults: MAX_SEARCH,
