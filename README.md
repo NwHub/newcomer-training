@@ -126,7 +126,7 @@ const API_KEY = "";
 
 const videoId = "2dldq7XQdIo";
 const response = await axios.get(
-  `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoId}&part=snippet`
+  `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
 );
 console.log(response.data);
 ```
@@ -162,7 +162,7 @@ const API_KEY = "";
 
 const videoId = "2dldq7XQdIo";
 const response = await axios.get(
-  `http://localhost:8080?key=${API_KEY}&id=${videoId}&part=snippet`
+  `http://localhost:8080?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
 );
 console.log(response.data);
 ```
@@ -206,7 +206,7 @@ const BASE_URL = "http://localhost:8080";
 
 const videoId = "2dldq7XQdIo";
 const response = await axios.get(
-  `${BASE_URL}/videos?key=${API_KEY}&id=${videoId}&part=snippet`
+  `${BASE_URL}/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
 );
 console.log(response.data);
 ```
@@ -230,6 +230,7 @@ const response = await axios.get(`${BASE_URL}/videos`, {
     key: API_KEY,
     id: videoId,
     part: "snippet",
+    maxResults: 1,
   },
 });
 console.log(response.data);
@@ -238,7 +239,7 @@ console.log(response.data);
 #### 関数化
 
 このまま呼び出す順に処理を追加しても完成しますが、それだとメンテナンス性が悪いので処理の関数化に挑戦してみましょう。  
-具体的には`function getAbc() {}`のようにします。
+具体的には`async function getAbc() {}`のようにします。
 
 ```javascript
 function getAbc(str) {
@@ -264,12 +265,13 @@ const BASE_URL = "http://localhost:8080";
 const videoId = "2dldq7XQdIo";
 
 // function getAbc() {}で処理を
-function getAbc() {
+async function getAbc() {
   const response = await axios.get(`${BASE_URL}/videos`, {
     params: {
       key: API_KEY,
       id: videoId,
       part: "snippet",
+      maxResults: 1,
     },
   });
   console.log(response.data);
@@ -280,84 +282,192 @@ getAbc();
 
 ### これで lesson01 は終了です。
 
+---
 
-# 最終的に欲しいデータ
+## lesson02 -YouTube 情報取得の外枠を作成-
 
-まずゴールとなる必要なデータから決めましょう。（実際には API で取得出来るものは何かな？と調べるところから始めるでしょう）
+さぁ、いよいよ YouTube から必要なデータを取得しましょう。  
+その前に簡単な仕様書を用意したので、参考にしてください。
 
-今回は予め決めておきました。
+### 関数の定義
 
-## 最終取得データ
+```javascript
+// axiosパッケージ読込
+const axios = require("axios");
 
-- チャンネル情報
-  - チャンネル ID
-  - チャンネル名
-- 動画情報（複数）
-  - 動画 ID
-  - 動画タイトル
-  - 公開日時
-  - 視聴回数
-  - Good 件数
-  - Bad 件数
-  - コメント件数
+// YouTube API KEY
+const API_KEY = "";
+const BASE_URL = "http://localhost:8080";
+// const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
-プログラムで扱う Json 形式も定義します。
+const videoId = "2dldq7XQdIo";
 
-```json
-{
-  "channelInfo": {
-    "channelId": "UCAwDrM75UAddwluabae4A6g",
-    "channelTitle": "title"
-  },
-  "videoDataList": [
-    {
-      "videId": "2CXdfads",
-      "title": "abc",
-      "publishedAt": "2021-06-19T10:38:55Z",
-      "viewCount": "96756",
-      "likeCount": "2826",
-      "dislikeCount": "24",
-      "commentCount": "53"
-    },
-    {
-      "videId": "2CXvkGbiwbs",
-      "title": "efg",
-      "publishedAt": "2021-06-20T22:38:55Z",
-      "viewCount": "96756",
-      "likeCount": "2826",
-      "dislikeCount": "24",
-      "commentCount": "53"
-    }
-  ]
+async function getAbc() {
+  // 省略
 }
+
+// これは不要なので消す
+// getAbc();
+
+// 追加
+function getYouTubeInfo(videoId) {
+  // 1-1. チャンネル情報取得の呼び出し
+  // 1-2. 動画 ID リスト取得の呼び出し
+  // 1-3. 動画情報 リスト取得の呼び出し
+
+  // 返却値
+  const youTubeInfo = {
+    channelInfo: {},
+    videoDataList: [],
+  };
+  // デバッグ
+  console.log(`youTubeInfo : ${youTubeInfo}`);
+  return youTubeInfo;
+}
+
+getYouTubeInfo(videoId);
 ```
 
-## lesson02-処理の流れ-
+## lesson03-チャンネル情報を取得-
 
-# 使用する YouTubeAPI について
+### 関数の定義
 
-## 動画情報取得
+lesson01 で作成した abc が利用できる形なので、関数名を修正しましょう
 
-[動画リスト情報取得 API](https://developers.google.com/youtube/v3/docs/videos/list?hl=ja)は指定した動画 ID（複数可）を元に動画情報リストを取得する。
+```javascript
+// 省略
 
-## 検索
+// getAbc() → getChannelInfo(videoId)に修正（関数名は仕様書をみてね）
+async function getChannelInfo(videoId) {
+  const response = await axios.get(`${BASE_URL}/videos`, {
+    params: {
+      key: API_KEY,
+      id: videoId,
+      part: "snippet",
+      maxResults: 1,
+    },
+  });
+  console.log(response.data);
+}
+function getYouTubeInfo(videoId) {
+  // 省略
+}
 
-チャンネルに紐付く動画リスト
+getYouTubeInfo(videoId);
+```
 
+### 返却値の設定
 
-## lesson02-動画情報を取得-
+`getChannelInfo`の返却値を作り込みます。
 
-さぁ、いよいよ YouTube から必要なデータを取得しましょう。
+```javascript
+// 省略
 
-###
+async function getChannelInfo(videoId) {
+  const response = await axios.get(`${BASE_URL}/videos`, {
+    params: {
+      key: API_KEY,
+      id: videoId,
+      part: "snippet",
+      maxResults: 1,
+    },
+  });
 
-## lesson03-チャンネルに紐づく動画 ID リストを取得-
+  // 返却値を設定（値は仕様書をみてね）
+  // console.log(JSON.stringify(jsonObject, null, 2)); でresponseの構造がわかるので、それを参考に設定していく
+  const channelInfo = {
+    channelId: response.data.items[0].snippet.channelId,
+    channelId: response.data.items[0].snippet.channelTitle,
+  };
 
-###
+  console.log(channelInfo);
+  return channelInfo;
+}
+function getYouTubeInfo(videoId) {
+  // 省略
+}
+
+getYouTubeInfo(videoId);
+```
+
+### `getChannelInfo`を呼び出す
+
+- `getYouTubeInfo`から`getChannelInfo`を呼び出すように修正
+- `getYouTubeInfo`に`async`を追加
+
+```javascript
+// 省略
+
+async function getChannelInfo(videoId) {
+  // 省略
+}
+
+// asyncを追加
+async function getYouTubeInfo(videoId) {
+  // getChannelInfoを呼び出すように修正
+  // 1-1. チャンネル情報取得の呼び出し
+  const channelInfo = await getChannelInfo(videoId);
+
+  // 1-2. 動画 ID リスト取得の呼び出し
+  // 1-3. 動画情報 リスト取得の呼び出し
+
+  // 返却値
+  const youTubeInfo = {
+    channelInfo: {},
+    videoDataList: [],
+  };
+  // デバッグ
+  console.log(`youTubeInfo : ${youTubeInfo}`);
+  return youTubeInfo;
+}
+
+getYouTubeInfo(videoId);
+```
 
 ## lesson04-動画情報リストを取得-
 
-###
+### 関数の定義
+
+```javascript
+// 省略
+
+async function getChannelInfo(videoId) {
+  // 省略
+}
+
+// 追加
+async function getVideoIdMultiList(channelId) {}
+
+async function getYouTubeInfo(videoId) {
+  // 省略
+}
+
+getYouTubeInfo(videoId);
+```
+
+### YouTubeAPI の呼び出し処理を作り込み
+
+```javascript
+async function getVideoIdMultiList(channelId) {
+  try {
+    const response = await axios.get(`${BASE_URL}/search`, {
+      params: {
+        key: KEY,
+        channelId: channelId,
+        part: "id",
+        order: "date",
+        type: "video",
+        maxResults: 50,
+        // pageToken: nextPageToken,
+      },
+    });
+
+    console.log(JSON.stringify(response.data, null, 2));
+  } catch (error) {
+    console.log(error);
+  }
+}
+```
 
 ## lesson05-取得した情報を整形-
 
