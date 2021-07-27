@@ -44,8 +44,6 @@ YouTube
 
 ## lesson01 -axios を使って YouTubeAPI に接続-
 
----
-
 ### 使用する YouTubeAPI の説明
 
 ---
@@ -115,7 +113,7 @@ npm install axios
   - 文字列結合
   - console.log
 
-youtube.js
+src/youtube.js
 
 ```javascript
 // axiosパッケージ読込
@@ -141,40 +139,6 @@ node youtube.js
 
 ---
 
-### json-server を使用する
-
-YouTubeApi はクォータと呼ばれる使用制限があるため、json-server を利用しモックデータを取得するようにする。
-
-新しくターミナルを立ち上げて、json-server を起動する。
-
-```shell
-npm run json-server
-```
-
-接続先を変更しましょう
-
-```javascript
-// axiosパッケージ読込
-const axios = require("axios");
-
-// YouTube API KEY
-const API_KEY = "";
-
-const videoId = "2dldq7XQdIo";
-const response = await axios.get(
-  `http://localhost:8080?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
-);
-console.log(response.data);
-```
-
-元のターミナルに戻って動作が変わらないことを確認しましょう。
-
-```Shell
-node youtube.js
-```
-
----
-
 ### コードフォーマット
 
 下記のコマンドを実行しコードフォーマットを実施します。
@@ -186,14 +150,12 @@ npm run format
 
 ---
 
-### 見やすいようにコードを修正
+### 基本となる URL を切り出し
 
 コードを修正し、可読性をあげましょう。  
 ごちゃっとしたコードはそれだけでバグの温床になってしまいます。
 
-### 基本となる URL を切り出し
-
-ベースとなる URL 部分を変数で抜き出しましょう。
+まずは接続 URL のホスト部分を変数で切り出しましょう。
 
 ```javascript
 // axiosパッケージ読込
@@ -201,8 +163,7 @@ const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
-const BASE_URL = "http://localhost:8080";
-// const BASE_URL = "https://www.googleapis.com/youtube/v3";
+const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
 const videoId = "2dldq7XQdIo";
 const response = await axios.get(
@@ -211,7 +172,9 @@ const response = await axios.get(
 console.log(response.data);
 ```
 
-#### クエリパラメータの引数化
+---
+
+### クエリパラメータの引数化
 
 `axios`はクエリパラメータ（?〜の部分）を`{ params:{ { key : value} }`の形で axios の第二引数として与えることができます。
 
@@ -221,8 +184,7 @@ const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
-const BASE_URL = "http://localhost:8080";
-// const BASE_URL = "https://www.googleapis.com/youtube/v3";
+const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
 const videoId = "2dldq7XQdIo";
 const response = await axios.get(`${BASE_URL}/videos`, {
@@ -236,7 +198,9 @@ const response = await axios.get(`${BASE_URL}/videos`, {
 console.log(response.data);
 ```
 
-#### 関数化
+---
+
+### 関数化
 
 このまま呼び出す順に処理を追加しても完成しますが、それだとメンテナンス性が悪いので処理の関数化に挑戦してみましょう。  
 具体的には`async function getAbc() {}`のようにします。
@@ -252,6 +216,46 @@ getAbc("abc");
 ```
 
 実際に適応するとこのような形になるかと思います。
+
+```javascript
+// axiosパッケージ読込
+const axios = require("axios");
+
+// YouTube API KEY
+const API_KEY = "";
+const BASE_URL = "https://www.googleapis.com/youtube/v3";
+
+const videoId = "2dldq7XQdIo";
+
+// function getAbc() {}で処理を
+async function getAbc() {
+  const response = await axios.get(`${BASE_URL}/videos`, {
+    params: {
+      key: API_KEY,
+      id: videoId,
+      part: "snippet",
+      maxResults: 1,
+    },
+  });
+  console.log(response.data);
+}
+
+getAbc();
+```
+
+---
+
+### json-server を使用する
+
+YouTubeApi はクォータと呼ばれる使用制限があるため、json-server を利用しモックデータを取得するようにする。
+
+新しくターミナルを立ち上げて、json-server を起動する。
+
+```shell
+npm run json-server
+```
+
+接続先を変更しましょう
 
 ```javascript
 // axiosパッケージ読込
@@ -280,9 +284,13 @@ async function getAbc() {
 getAbc();
 ```
 
-### これで lesson01 は終了です。
+元のターミナルに戻って動作が変わらないことを確認しましょう。
 
----
+```Shell
+node youtube.js
+```
+
+### これで lesson01 は終了です。
 
 ## lesson02 -YouTube 情報取得の外枠を作成-
 
@@ -356,6 +364,8 @@ function getYouTubeInfo(videoId) {
 getYouTubeInfo(videoId);
 ```
 
+---
+
 ### 返却値の設定
 
 `getChannelInfo`の返却値を作り込みます。
@@ -389,6 +399,8 @@ function getYouTubeInfo(videoId) {
 
 getYouTubeInfo(videoId);
 ```
+
+---
 
 ### `getChannelInfo`を呼び出す
 
@@ -445,6 +457,8 @@ async function getYouTubeInfo(videoId) {
 getYouTubeInfo(videoId);
 ```
 
+---
+
 ### YouTubeAPI の呼び出し処理を作り込み
 
 ```javascript
@@ -470,7 +484,9 @@ async function getVideoIdMultiList(channelId) {
 }
 ```
 
-### videoIdListを作成
+---
+
+### videoIdList を作成
 
 `map`を使って`videoIdList`を作成します。
 
@@ -492,7 +508,6 @@ async function getVideoIdMultiList(channelId) {
 
     // console.log(JSON.stringify(response.data, null, 2));
     const videoIdList = response.data.items.map((item) => item.id.videoId);
-
   } catch (error) {
     console.log(error);
   }
