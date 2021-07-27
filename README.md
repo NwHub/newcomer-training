@@ -458,11 +458,41 @@ async function getVideoIdMultiList(channelId) {
         order: "date",
         type: "video",
         maxResults: 50,
+        // 後で設定する
         // pageToken: nextPageToken,
       },
     });
 
     console.log(JSON.stringify(response.data, null, 2));
+  } catch (error) {
+    console.log(error);
+  }
+}
+```
+
+### videoIdListを作成
+
+`map`を使って`videoIdList`を作成します。
+
+```javascript
+async function getVideoIdMultiList(channelId) {
+  try {
+    const response = await axios.get(`${BASE_URL}/search`, {
+      params: {
+        key: KEY,
+        channelId: channelId,
+        part: "id",
+        order: "date",
+        type: "video",
+        maxResults: 50,
+        // 後で設定する
+        // pageToken: nextPageToken,
+      },
+    });
+
+    // console.log(JSON.stringify(response.data, null, 2));
+    const videoIdList = response.data.items.map((item) => item.id.videoId);
+
   } catch (error) {
     console.log(error);
   }
