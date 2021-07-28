@@ -1,6 +1,6 @@
 # 新人教育プログラム
 
-## ご意見お待ちしております。
+## ご意見お待ちしております
 
 https://github.com/NwHub/newcomer-training/issues
 
@@ -79,13 +79,6 @@ YouTube
 `skeleton`ブランチを指定して、GitHub からコードの雛形をクローンします。  
 雛形の中身はコードフォーマットやモックサーバの設定などがしてありますが、0 から作るのとほぼ変わりません。
 
-メモ：
-
-- 使用する技術
-  - Git
-- 公式ページ
-  - [Axios](https://axios-http.com/)
-
 ```Shell
 git clone https://github.com/NwHub/youtube-api.git -b skeleton
 ```
@@ -106,7 +99,8 @@ npm install
 
 ### Axios の導入
 
-プロジェクトルートで`npm install axios`を実行してインストール
+プロジェクトルートで`npm install axios`を実行してインストールします。  
+これだけで`axios`のパッケージが導入されます、すごいですね。
 
 メモ：
 
@@ -132,15 +126,13 @@ npm install axios
 
 ### API に接続
 
-メモ：
+早速 YouTubeAPI と疎通しましょう。
 
-- 使用する技術
-  - パッケージ読み込み
-  - 変数定義
-  - 文字列結合
-  - console.log
+- `src/youtube.js`にコードを貼り付け
+- `API_KEY`に別途配布している Token を設定
+- 自動的に保存にチェックを忘れずに
 
-src/youtube.js
+#### src/youtube.js
 
 ```javascript
 // axiosパッケージ読込
@@ -153,12 +145,23 @@ const videoId = "2dldq7XQdIo";
 const response = await axios.get(
   `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
 );
+
 console.log(response.data);
 ```
+
+メモ：
+
+- 使用する技術
+  - パッケージ読み込み
+  - 変数定義
+  - 文字列結合
+  - console.log
 
 ---
 
 ### 実行
+
+正しく取れるか確認しましょう。
 
 ```Shell
 node youtube.js
@@ -168,18 +171,24 @@ node youtube.js
 
 ### コードフォーマット
 
-下記のコマンドを実行しコードフォーマットを実施します。
+今回 DaaS（Desktop As A Service）を利用する関係でコードの整形が難しいという問題があります。  
+手動でスペースを入れたり、タブを入れたるするのは考えられないので、`prettier`というパッケージを利用します。  
+設定は済ませてあるので、下記のコマンドを実行しコードフォーマットを実施します。
 ちなみに`package.json`の scripts の項目に設定が書いてあります。
 
 ```shell
 npm run format
 ```
 
+メモ
+
+- prettier
+
 ---
 
 ### 基本となる URL を切り出し
 
-コードを修正し、可読性をあげましょう。  
+コードを修正して可読性を上げましょう。  
 ごちゃっとしたコードはそれだけでバグの温床になってしまいます。
 
 まずは接続 URL のホスト部分を変数で切り出しましょう。
@@ -274,9 +283,11 @@ getAbc();
 
 ### json-server を使用する
 
-YouTubeApi はクォータと呼ばれる使用制限があるため、json-server を利用しモックデータを取得するようにする。
+YouTubeApi はクォータと呼ばれる使用制限があるため、YouTubeAPI に何度も接続すると 1 日のインターバルが発生します。  
+しかし開発中は何度も接続する必要がでてきます。  
+そこで簡単にサーバーを立ち上げることが出来る`json-server` を利用して、モックデータを取得するようにすることで解決します。
 
-新しくターミナルを立ち上げて、json-server を起動する。
+例によって設定はしておいたので`新しく違うターミナルを立ち上げて`、json-server を起動してみましょう。
 
 ```shell
 npm run json-server
@@ -541,6 +552,7 @@ async function getVideoIdMultiList(channelId) {
 
     // console.log(JSON.stringify(response.data, null, 2));
     const videoIdList = response.data.items.map((item) => item.id.videoId);
+    console.log(videoIdList);
   } catch (error) {
     console.log(error);
   }
@@ -549,7 +561,56 @@ async function getVideoIdMultiList(channelId) {
 
 ---
 
+### 最大件数になるまで取得するように修正
+
+```javascript
+// 省略
+
+const BASE_URL = "http://localhost:8080";
+// const BASE_URL = "https://www.googleapis.com/youtube/v3";
+
+// 追加
+// 動画情報の最大件数
+const MAX_VIDEO_COUNT = 20;
+
+async function getChannelInfo(videoId) {
+  // 省略
+}
+
+async function getVideoIdMultiList(channelId) {
+  let nextPageToken = "";
+  let videoCount = 0;
+  while (videoCount < MAX_VIDEO_COUNT) {
+    try {
+      const response = await axios.get(`${BASE_URL}/search`, {
+        params: {
+          key: KEY,
+          channelId: channelId,
+          part: "id",
+          order: "date",
+          type: "video",
+          maxResults: 50,
+          // 追加
+          pageToken: nextPageToken,
+        },
+      });
+
+      // console.log(JSON.stringify(response.data, null, 2));
+      const videoIdList = response.data.items.map((item) => item.id.videoId);
+      
+      // 追加
+      videoCount += videoIdList.length;
+      nextPageToken = response.data.nextPageToken;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+```
+
 ## lesson05-取得した情報を整形-
+
+## lesson06-取得した情報を整形-
 
 ###
 
