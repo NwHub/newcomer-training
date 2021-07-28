@@ -14,7 +14,12 @@ https://github.com/NwHub/newcomer-training/issues
 
 ## GitHub 登録
 
+![image](https://user-images.githubusercontent.com/1374058/120644963-e202f700-c4b2-11eb-92ba-4781523969ff.png)
+
 ## Paiza Cloud 登録
+
+![image](https://user-images.githubusercontent.com/1374058/127300018-27aecb9a-0227-4899-ac6a-3ea6e2d9b657.png)
+![image](https://user-images.githubusercontent.com/1374058/127300594-2a599d2e-165d-4fea-b8f5-c5bedbaa87d7.png)
 
 ## Node.js で JavaScript を実行
 
@@ -31,6 +36,17 @@ Mac と Windows でコピー＆ペーストのやり方が違うので、以下�
 | ペースト | ターミナルで`⌘ + v`             | ターミナルで`右クリック → 貼り付け`                |
 
 #### ターミナルを開く
+
+GUI からターミナルを開きます。
+![image](https://user-images.githubusercontent.com/1374058/127300939-ec11de69-e362-4a00-aa7a-8ac7dd774484.png)
+
+#### npm の更新
+
+なにも考えずターミルで以下のコマンドを実行してください。
+
+```shell
+npm install -g npm
+```
 
 #### ファイルを作成
 
