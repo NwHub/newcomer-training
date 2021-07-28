@@ -50,7 +50,8 @@ YouTube
 
 ### GitHub からプロジェクトをクローン
 
-コードフォーマットの設定などがしてありますが、0 から作るのとほぼ変わりません。
+`skeleton`ブランチを指定して、GitHub からコードの雛形をクローンします。  
+雛形の中身はコードフォーマットやモックサーバの設定などがしてありますが、0 から作るのとほぼ変わりません。
 
 メモ：
 
@@ -60,7 +61,7 @@ YouTube
   - [Axios](https://axios-http.com/)
 
 ```Shell
-git clone https://github.com/NwHub/youtube-api.git
+git clone https://github.com/NwHub/youtube-api.git -b skeleton
 ```
 
 クローンしたプロジェクトに移動
@@ -290,12 +291,16 @@ getAbc();
 node youtube.js
 ```
 
-### これで lesson01 は終了です。
+---
 
 ## lesson02 -YouTube 情報取得の外枠を作成-
 
 さぁ、いよいよ YouTube から必要なデータを取得しましょう。  
 その前に簡単な仕様書を用意したので、参考にしてください。
+
+### 仕様書
+
+- [詳細設計](https://github.com/NwHub/newcomer-training/wiki/%E8%A9%B3%E7%B4%B0%E8%A8%AD%E8%A8%88)
 
 ### 関数の定義
 
@@ -513,6 +518,8 @@ async function getVideoIdMultiList(channelId) {
   }
 }
 ```
+
+---
 
 ## lesson05-取得した情報を整形-
 
