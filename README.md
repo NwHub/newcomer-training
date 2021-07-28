@@ -32,7 +32,7 @@ Mac と Windows でコピー＆ペーストのやり方が違うので、以下�
 
 #### ターミナルを開く
 
-### ファイルを作成
+#### ファイルを作成
 
 以下のコマンドでファイルを作成できます。（GUI から作っても OK）
 
@@ -446,7 +446,7 @@ getYouTubeInfo(videoId);
 
 ---
 
-### `getChannelInfo`を呼び出す
+### getYouTubeInfo から`getChannelInfo`を呼び出す
 
 - `getYouTubeInfo`から`getChannelInfo`を呼び出すように修正
 - `getYouTubeInfo`に`async`を追加
@@ -480,7 +480,11 @@ async function getYouTubeInfo(videoId) {
 getYouTubeInfo(videoId);
 ```
 
+---
+
 ## lesson04-動画情報リストを取得-
+
+おそらくこの処理が一番難しいかと思います。
 
 ### 関数の定義
 
@@ -561,7 +565,12 @@ async function getVideoIdMultiList(channelId) {
 
 ---
 
-### 最大件数になるまで取得するように修正
+### 最大件数になるまで取得するように処理を追加
+
+- `MAX_VIDEO_COUNT`の定数を定義
+- `getVideoIdMultiList`の変数として、取得件数の合計を保持する`videoCount`を定義
+- `videoCount`に件数を加算する処理を追加
+- API からの返却された nextPageToken をチェックし、存在しない場合はループを終了する（最大件数に達していないが、次の取得するデータがない）
 
 ```javascript
 // 省略
@@ -571,15 +580,16 @@ const BASE_URL = "http://localhost:8080";
 
 // 追加
 // 動画情報の最大件数
-const MAX_VIDEO_COUNT = 20;
+const MAX_VIDEO_COUNT = 200;
 
 async function getChannelInfo(videoId) {
   // 省略
 }
 
 async function getVideoIdMultiList(channelId) {
-  let nextPageToken = "";
+  // 追加
   let videoCount = 0;
+  // 追加
   while (videoCount < MAX_VIDEO_COUNT) {
     try {
       const response = await axios.get(`${BASE_URL}/search`, {
@@ -597,10 +607,14 @@ async function getVideoIdMultiList(channelId) {
 
       // console.log(JSON.stringify(response.data, null, 2));
       const videoIdList = response.data.items.map((item) => item.id.videoId);
-      
       // 追加
       videoCount += videoIdList.length;
-      nextPageToken = response.data.nextPageToken;
+
+      // 追加
+      const nextPageToken = response.data.nextPageToken;
+      if (!nextPageToken) {
+        break;
+      }
     } catch (error) {
       console.log(error);
     }
@@ -608,7 +622,146 @@ async function getVideoIdMultiList(channelId) {
 }
 ```
 
-## lesson05-取得した情報を整形-
+### 多重配列の返却値を作成
+
+- 返却値を格納する変数`videoIdMultiList`を定義
+- `videoIdMultiList`に`videoIdList`を追加するように処理を作成
+- `videoIdMultiList`を return で返却する（値は仕様書をみてね）
+
+```javascript
+async function getVideoIdMultiList(channelId) {
+  // 追加
+  let videoIdMultiList = [];
+  let videoCount = 0;
+  let nextPageToken = "";
+
+  while (videoCount < MAX_VIDEO_COUNT) {
+    try {
+      const response = await axios.get(`${BASE_URL}/search`, {
+        params: {
+          key: KEY,
+          channelId: channelId,
+          part: "id",
+          order: "date",
+          type: "video",
+          maxResults: 50,
+          pageToken: nextPageToken,
+        },
+      });
+
+      // console.log(JSON.stringify(response.data, null, 2));
+      const videoIdList = response.data.items.map((item) => item.id.videoId);
+      videoCount += videoIdList.length;
+      // 追加
+      videoIdMultiList = [...videoIdMultiList, videoIdList];
+
+      const nextPageToken = response.data.nextPageToken;
+      if (!nextPageToken) {
+        break;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  // 追加
+  return videoIdMultiList;
+}
+```
+
+---
+
+### getYouTubeInfo から`getVideoIdMultiList`を呼び出す
+
+- `getYouTubeInfo`から`getVideoIdMultiList`を呼び出すように修正
+- `getYouTubeInfo`に`async`を追加
+
+```javascript
+// 省略
+
+async function getChannelInfo(videoId) {
+  // 省略
+}
+async function getVideoIdMultiList(channelId) {
+  // 省略
+}
+
+async function getYouTubeInfo(videoId) {
+
+  // 1-1. チャンネル情報取得の呼び出し
+  const channelInfo = await getChannelInfo(videoId);
+
+  // getVideoIdMultiListを呼び出すように修正
+  // 1-2. 動画 ID リスト取得の呼び出し
+  const videoIdMultiList = await getVideoIdMultiList(channelInfo.channelId)；
+  console.log(videoIdMultiList);
+
+  // 1-3. 動画情報 リスト取得の呼び出し
+
+  // 返却値
+  const youTubeInfo = {
+    channelInfo: {},
+    videoDataList: [],
+  };
+  // デバッグ
+  console.log(`youTubeInfo : ${youTubeInfo}`);
+  return youTubeInfo;
+}
+
+getYouTubeInfo(videoId);
+```
+
+## lesson05-動画情報 リスト取得-
+
+### 関数の定義
+
+- `getVideoInfoList`を追加する
+
+```javascript
+// 省略
+
+async function getChannelInfo(videoId) {
+  // 省略
+}
+
+async function getVideoIdMultiList(channelId) {
+  // 省略
+}
+
+// 追加
+async function getVideoInfoList(videoIdMultiList) {}
+
+async function getYouTubeInfo(videoId) {
+  // 省略
+}
+
+getYouTubeInfo(videoId);
+```
+
+---
+
+### 関数の定義
+
+- `getVideoInfoList`を追加する
+
+```javascript
+async function getVideoInfoList(videoIdMultiList) {
+  try {
+    const commaVideoIdList = videoIdList.join(",");
+    const response = await axios.get(`${BASE_URL}/videos`, {
+      params: {
+        key: KEY,
+        id: commaVideoIdList,
+        part: "snippet,statistics",
+        maxResults: 50,
+      },
+    });
+
+    console.log(JSON.stringify(response.data, null, 2));
+  } catch (error) {
+    console.log(error);
+  }
+}
+```
 
 ## lesson06-取得した情報を整形-
 
