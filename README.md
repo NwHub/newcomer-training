@@ -18,21 +18,47 @@ https://github.com/NwHub/newcomer-training/issues
 
 ## Node.js で JavaScript を実行
 
+環境が正しく動作するか確認していきます。
+
 ### 作業ディレクトリと js ファイルを作成
+
+ターミナルを開いて以下のコマンドを実行すると、ファイルが作られます。  
+Mac と Windows でコピー＆ペーストのやり方が違うので、以下を参考にしてください。
+
+|          | Mac                             | Windows                                            |
+| -------- | ------------------------------- | -------------------------------------------------- |
+| コピー   | ページの文字列を選択して`⌘ + c` | ページの文字列の右端にあるコピーアイコンをクリック |
+| ペースト | ターミナルで`⌘ + v`             | ターミナルで`右クリック → 貼り付け`                |
+
+#### ターミナルを開く
+
+### ファイルを作成
+
+以下のコマンドでファイルを作成できます。（GUI から作っても OK）
 
 ```Shell
 touch test.js
 ```
 
+---
+
 ### JS ファイルに処理を記述
 
-test.js
+作成したファイルを右ペインから開き、以下の内容を記述します。  
+その際ファイルの保存を忘れずに！（自動保存にチェックを入れておいた方がよい）
+
+#### test.js
 
 ```javascript
 console.log("YouTube");
 ```
 
+---
+
 ### JS ファイルを実行
+
+`node ファイル名`で JavaScript を実行します。  
+`YouTube`と表示されれば成功です。
 
 ```Shell
 node test.js
@@ -42,11 +68,11 @@ node test.js
 YouTube
 ```
 
+---
+
 ## lesson01 -axios を使って YouTubeAPI に接続-
 
-### 使用する YouTubeAPI の説明
-
----
+ウォーミングアップとして軽い JavaScript のコーディングと YouTubeAPI の疎通を試してみましょう。
 
 ### GitHub からプロジェクトをクローン
 
@@ -340,6 +366,8 @@ function getYouTubeInfo(videoId) {
 
 getYouTubeInfo(videoId);
 ```
+
+---
 
 ## lesson03-チャンネル情報を取得-
 
