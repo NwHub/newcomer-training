@@ -14,9 +14,18 @@ https://github.com/NwHub/newcomer-training/issues
 
 ## GitHub 登録
 
+すでに何らかの GitHub アカウントを持っている人は不要です。  
+未実施の人は登録をお願いします。（会社メールでも OK）
+
+#### [https://github.com/](https://github.com/)
+
 ![image](https://user-images.githubusercontent.com/1374058/120644963-e202f700-c4b2-11eb-92ba-4781523969ff.png)
 
 ## Paiza Cloud 登録
+
+Paiza Cloud に登録しましょう。（と言っていも GitHub アカウントと連携するだけ）
+
+#### [https://paiza.cloud/signup](https://paiza.cloud/signup)
 
 ![image](https://user-images.githubusercontent.com/1374058/127300018-27aecb9a-0227-4899-ac6a-3ea6e2d9b657.png)
 ![image](https://user-images.githubusercontent.com/1374058/127300594-2a599d2e-165d-4fea-b8f5-c5bedbaa87d7.png)
