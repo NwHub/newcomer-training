@@ -69,8 +69,9 @@ touch test.js
 
 ### JS ファイルに処理を記述
 
-作成したファイルを右ペインから開き、以下の内容を記述します。  
-その際ファイルの保存を忘れずに！（自動保存にチェックを入れておいた方がよい）
+作成したファイルを右ペインから開き、以下の内容を記述します。
+
+##### その際ファイルの保存を忘れずに！（自動保存にチェックを入れておいた方がよい）
 
 #### test.js
 
@@ -130,8 +131,8 @@ npm install
 メモ：
 
 - 使用する技術
-  - node
-  - npm
+  - [node](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#nodejs%E3%83%8E%E3%83%BC%E3%83%89-%E3%81%A8%E3%81%AF)
+  - [npm](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#npm-%E3%81%A8%E3%81%AF)
 - 公式ページ
   - [Axios](https://axios-http.com/)
 
@@ -177,9 +178,9 @@ console.log(response.data);
 メモ：
 
 - 使用する技術
-  - パッケージ読み込み
-  - 変数定義
-  - 文字列結合
+  - [パッケージ読込](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E8%AA%AD%E8%BE%BC)
+  - [変数](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E5%A4%89%E6%95%B0)
+  - [文字列結合](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E6%96%87%E5%AD%97%E5%88%97%E7%B5%90%E5%90%88)
   - console.log
 
 ---
@@ -207,7 +208,8 @@ npm run format
 
 メモ
 
-- prettier
+- 公式
+  - [prettier](https://prettier.io/)
 
 ---
 
@@ -224,6 +226,7 @@ const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
+// 切出し
 const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
 const videoId = "2dldq7XQdIo";
@@ -353,6 +356,11 @@ getAbc();
 node youtube.js
 ```
 
+メモ
+
+- 公式
+  - [json-server](https://github.com/typicode/json-server)
+
 ---
 
 ## lesson02 -YouTube 情報取得の外枠を作成-
@@ -402,6 +410,9 @@ function getYouTubeInfo(videoId) {
 
 getYouTubeInfo(videoId);
 ```
+
+- 使用する技術
+  - [json](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#json)
 
 ---
 
@@ -469,6 +480,10 @@ function getYouTubeInfo(videoId) {
 getYouTubeInfo(videoId);
 ```
 
+- 使用する技術
+  - [json](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#json)
+  - [async/await](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#asyncawait)
+
 ---
 
 ### getYouTubeInfo から`getChannelInfo`を呼び出す
@@ -504,6 +519,9 @@ async function getYouTubeInfo(videoId) {
 
 getYouTubeInfo(videoId);
 ```
+
+- 使用する技術
+  - [async/await](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#asyncawait)
 
 ---
 
@@ -588,6 +606,9 @@ async function getVideoIdMultiList(channelId) {
 }
 ```
 
+- 使用する技術
+  - [ループして配列を作る](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E3%83%AB%E3%83%BC%E3%83%97%E3%81%97%E3%81%A6%E9%85%8D%E5%88%97%E3%82%92%E3%81%A4%E3%81%8F%E3%82%8B)
+
 ---
 
 ### 最大件数になるまで取得するように処理を追加
@@ -647,6 +668,12 @@ async function getVideoIdMultiList(channelId) {
 }
 ```
 
+メモ
+
+- 使用する技術
+  - [ループ](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E3%83%AB%E3%83%BC%E3%83%97)
+  - [if 文](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#if-%E6%96%87)
+
 ### 多重配列の返却値を作成
 
 - 返却値を格納する変数`videoIdMultiList`を定義
@@ -692,6 +719,11 @@ async function getVideoIdMultiList(channelId) {
   return videoIdMultiList;
 }
 ```
+
+メモ
+
+- 使用する技術
+  - [配列に追加](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E9%85%8D%E5%88%97%E3%81%AB%E8%BF%BD%E5%8A%A0)
 
 ---
 
