@@ -125,16 +125,8 @@ npm install
 
 ### Axios の導入
 
-プロジェクトルートで`npm install axios`を実行してインストールします。  
-これだけで`axios`のパッケージが導入されます、すごいですね。
-
-メモ：
-
-- 使用する技術
-  - [node](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#nodejs%E3%83%8E%E3%83%BC%E3%83%89-%E3%81%A8%E3%81%AF)
-  - [npm](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#npm-%E3%81%A8%E3%81%AF)
-- 公式ページ
-  - [Axios](https://axios-http.com/)
+今回は YouTubeAPI に接続するために `Axios`というパッケージを使います。  
+プロジェクトルートで`npm install axios`を実行してインストールしましょう。
 
 ```Shell
 npm install axios
@@ -148,11 +140,21 @@ npm install axios
 }
 ```
 
+これだけで`Axios`のパッケージが導入されます、すごいですね。
+
+#### メモ：
+
+- 使用する技術
+  - [node](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#nodejs%E3%83%8E%E3%83%BC%E3%83%89-%E3%81%A8%E3%81%AF)
+  - [npm](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#npm-%E3%81%A8%E3%81%AF)
+- 公式ページ
+  - [Axios](https://axios-http.com/)
+
 ---
 
 ### API に接続
 
-早速 YouTubeAPI と疎通しましょう。
+早速 YouTubeAPI と疎通してみましょう。
 
 - `src/youtube.js`にコードを貼り付け
 - `API_KEY`に別途配布している Token を設定
@@ -382,8 +384,7 @@ const axios = require("axios");
 const API_KEY = "";
 const BASE_URL = "http://localhost:8080";
 // const BASE_URL = "https://www.googleapis.com/youtube/v3";
-
-const videoId = "2dldq7XQdIo";
+const MAX_RESULTS = 50:
 
 async function getAbc() {
   // 省略
@@ -393,7 +394,7 @@ async function getAbc() {
 // getAbc();
 
 // 追加
-function getYouTubeInfo(videoId) {
+async function getYouTubeInfo(videoId) {
   // 1-1. チャンネル情報取得の呼び出し
   // 1-2. 動画 ID リスト取得の呼び出し
   // 1-3. 動画情報 リスト取得の呼び出し
@@ -401,13 +402,14 @@ function getYouTubeInfo(videoId) {
   // 返却値
   const youTubeInfo = {
     channelInfo: {},
-    videoDataList: [],
+    videoInfoList: [],
   };
   // デバッグ
   console.log(`youTubeInfo : ${youTubeInfo}`);
   return youTubeInfo;
 }
 
+const videoId = "2dldq7XQdIo";
 getYouTubeInfo(videoId);
 ```
 
@@ -437,6 +439,7 @@ async function getChannelInfo(videoId) {
   });
   console.log(response.data);
 }
+
 function getYouTubeInfo(videoId) {
   // 省略
 }
@@ -510,7 +513,7 @@ async function getYouTubeInfo(videoId) {
   // 返却値
   const youTubeInfo = {
     channelInfo: {},
-    videoDataList: [],
+    videoInfoList: [],
   };
   // デバッグ
   console.log(`youTubeInfo : ${youTubeInfo}`);
@@ -562,7 +565,7 @@ async function getVideoIdMultiList(channelId) {
         part: "id",
         order: "date",
         type: "video",
-        maxResults: 50,
+        maxResults: MAX_RESULTS,
         // 後で設定する
         // pageToken: nextPageToken,
       },
@@ -591,7 +594,7 @@ async function getVideoIdMultiList(channelId) {
         part: "id",
         order: "date",
         type: "video",
-        maxResults: 50,
+        maxResults: MAX_RESULTS,
         // 後で設定する
         // pageToken: nextPageToken,
       },
@@ -612,6 +615,10 @@ async function getVideoIdMultiList(channelId) {
 ---
 
 ### 最大件数になるまで取得するように処理を追加
+
+YouTubeApi では一回に取得出来る最大件数は 50 件なので、たとえば 100 件欲しい場合は 2 回取得することになります。  
+加えて、何万件もある可能性があるので、取得件数に制限を儲ける必要もあります。  
+そこで今回は「取得する最大件数を決めて、件数に達するまでループする」という処理にします。
 
 - `MAX_VIDEO_COUNT`の定数を定義
 - `getVideoIdMultiList`の変数として、取得件数の合計を保持する`videoCount`を定義
@@ -645,7 +652,7 @@ async function getVideoIdMultiList(channelId) {
           part: "id",
           order: "date",
           type: "video",
-          maxResults: 50,
+          maxResults: MAX_RESULTS,
           // 追加
           pageToken: nextPageToken,
         },
@@ -696,7 +703,7 @@ async function getVideoIdMultiList(channelId) {
           part: "id",
           order: "date",
           type: "video",
-          maxResults: 50,
+          maxResults: MAX_RESULTS,
           pageToken: nextPageToken,
         },
       });
@@ -730,7 +737,6 @@ async function getVideoIdMultiList(channelId) {
 ### getYouTubeInfo から`getVideoIdMultiList`を呼び出す
 
 - `getYouTubeInfo`から`getVideoIdMultiList`を呼び出すように修正
-- `getYouTubeInfo`に`async`を追加
 
 ```javascript
 // 省略
@@ -754,10 +760,11 @@ async function getYouTubeInfo(videoId) {
 
   // 1-3. 動画情報 リスト取得の呼び出し
 
+
   // 返却値
   const youTubeInfo = {
     channelInfo: {},
-    videoDataList: [],
+    videoInfoList: [],
   };
   // デバッグ
   console.log(`youTubeInfo : ${youTubeInfo}`);
@@ -776,40 +783,38 @@ getYouTubeInfo(videoId);
 ```javascript
 // 省略
 
-async function getChannelInfo(videoId) {
-  // 省略
-}
-
 async function getVideoIdMultiList(channelId) {
   // 省略
 }
 
 // 追加
-async function getVideoInfoList(videoIdMultiList) {}
-
+async function getVideoInfoList(videoIdMultiList) {
+  return [];
+}
 async function getYouTubeInfo(videoId) {
   // 省略
-}
 
-getYouTubeInfo(videoId);
+  // 1-3. 動画情報 リスト取得の呼び出し
+  // 追加
+  const videoInfoList = getVideoInfoList(videoIdMultiList);
+
+  // 省略
+}
 ```
 
 ---
 
-### 関数の定義
-
-- `getVideoInfoList`を追加する
+### YouTubeAPI の呼び出し処理
 
 ```javascript
 async function getVideoInfoList(videoIdMultiList) {
   try {
-    const commaVideoIdList = videoIdList.join(",");
     const response = await axios.get(`${BASE_URL}/videos`, {
       params: {
         key: KEY,
-        id: commaVideoIdList,
+        id: "2CXvkGbiwbs,DQ5IquyRCNI",
         part: "snippet,statistics",
-        maxResults: 50,
+        maxResults: MAX_RESULTS,
       },
     });
 
@@ -817,11 +822,127 @@ async function getVideoInfoList(videoIdMultiList) {
   } catch (error) {
     console.log(error);
   }
+  return [];
 }
 ```
 
+---
+
+### ループ化
+
+```javascript
+async function getVideoInfoList(videoIdMultiList) {
+  // for を追加
+  for (const videoIdList of videoIdMultiList) {
+    try {
+      // 配列を`join`を使ってカンマ繋ぎに変換する
+      const commaVideoIdList = videoIdList.join(",");
+      const response = await axios.get(`${BASE_URL}/videos`, {
+        params: {
+          key: KEY,
+          // 変更
+          id: commaVideoIdList,
+          part: "snippet,statistics",
+          maxResults: MAX_RESULTS,
+        },
+      });
+
+      console.log(JSON.stringify(response.data, null, 2));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  return [];
+}
+```
+
+---
+
+### 返却値の videoInfoList を作成
+
+```javascript
+async function getVideoInfoList(videoIdMultiList) {
+  let videoInfoList = [];
+  for (const videoIdList of videoIdMultiList) {
+    try {
+      const commaVideoIdList = videoIdList.join(",");
+      const response = await axios.get(`${BASE_URL}/videos`, {
+        params: {
+          key: KEY,
+          id: commaVideoIdList,
+          part: "snippet,statistics",
+          maxResults: MAX_RESULTS,
+        },
+      });
+
+      // console.log(JSON.stringify(response.data, null, 2));
+
+      for (item of response.data.items) {
+        const videoInfo = {
+          viewCount: item.statistics.viewCount,
+          likeCount: item.statistics.likeCount,
+          dislikeCount: item.statistics.dislikeCount,
+          commentCount: item.statistics.commentCount,
+          videId: item.id,
+          title: item.snippet.title,
+          publishedAt: item.snippet.publishedAt,
+        };
+        videoInfoList = [...videoInfoList, videoInfo];
+        // もしくは
+        // videoInfoList.push(videoInfo);
+      }
+
+      // 別の方法として、こういうでもいい
+      // const tmpVideoInfoList = response.data.items.map((item) => {
+      //   return {
+      //     viewCount: item.statistics.viewCount,
+      //     likeCount: item.statistics.likeCount,
+      //     dislikeCount: item.statistics.dislikeCount,
+      //     commentCount: item.statistics.commentCount,
+      //     videId: item.id,
+      //     title: item.snippet.title,
+      //     publishedAt: item.snippet.publishedAt,
+      //   };
+      // });
+      // videoInfoList = [...videoInfoList, ...tmpVideoInfoList];
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  console.log(videoInfoList);
+  return videoInfoList;
+}
+```
+
+---
+
 ## lesson06-取得した情報を整形-
 
-###
+### 返却値の修正
+
+1-1 と
+
+```javascript
+async function getYouTubeInfo(videoId) {
+  // 1-1. チャンネル情報取得の呼び出し
+  const channelInfo = await getChannelInfo(videoId);
+
+  // 1-2. 動画 ID リスト取得の呼び出し
+  const videoIdMultiList = await getVideoIdMultiList(channelInfo.channelId)；
+
+  // 1-3. 動画情報 リスト取得の呼び出し
+ const videoInfoList = getVideoInfoList(videoIdMultiList);
+
+  // 変更
+  // 返却値
+  const youTubeInfo = {
+    channelInfo: channelInfo,
+    videoInfoList: videoInfoList,
+  };
+  // デバッグ
+  console.log(`youTubeInfo : ${youTubeInfo}`);
+  return youTubeInfo;
+}
+```
 
 ## lesson06-画面表示-
