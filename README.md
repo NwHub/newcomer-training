@@ -23,7 +23,7 @@ https://github.com/NwHub/newcomer-training/issues
 
 ## Paiza Cloud 登録
 
-Paiza Cloud に登録しましょう。（と言っていも GitHub アカウントと連携するだけ）
+Paiza Cloud に登録しましょう。（GitHub アカウントと連携するだけ）
 
 #### [https://paiza.cloud/signup](https://paiza.cloud/signup)
 
@@ -51,7 +51,8 @@ GUI からターミナルを開きます。
 
 #### npm の更新
 
-なにも考えずターミルで以下のコマンドを実行してください。
+なにも考えずターミルで以下のコマンドを実行してください。  
+npm がアップデートされます。
 
 ```shell
 npm install -g npm
@@ -73,6 +74,8 @@ touch test.js
 
 ##### その際ファイルの保存を忘れずに！（自動保存にチェックを入れておいた方がよい）
 
+![image](https://user-images.githubusercontent.com/1374058/129496394-189599c6-1175-49bb-b026-3d4d70af872a.png)
+
 #### test.js
 
 ```javascript
@@ -83,8 +86,10 @@ console.log("YouTube");
 
 ### JS ファイルを実行
 
-`node ファイル名`で JavaScript を実行します。  
+ターミナルで`node ファイル名`と入力して JavaScript を実行します。  
 `YouTube`と表示されれば成功です。
+
+![image](https://user-images.githubusercontent.com/1374058/129496472-7e119e4e-2064-431f-84f9-4132f55fb80f.png)
 
 ```Shell
 node test.js
@@ -132,7 +137,8 @@ npm install
 npm install axios
 ```
 
-`package.json`を確認すると導入されたことが確認できる
+`package.json`を確認すると導入されたことが確認できる  
+![image](https://user-images.githubusercontent.com/1374058/129496891-c7d69f32-1494-4e9e-b113-96aba5e232ab.png)
 
 ```json
 "dependencies": {
@@ -142,7 +148,7 @@ npm install axios
 
 これだけで`Axios`のパッケージが導入されます、すごいですね。
 
-#### メモ：
+##### メモ：
 
 - 使用する技術
   - [node](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#nodejs%E3%83%8E%E3%83%BC%E3%83%89-%E3%81%A8%E3%81%AF)
@@ -156,9 +162,13 @@ npm install axios
 
 早速 YouTubeAPI と疎通してみましょう。
 
-- `src/youtube.js`にコードを貼り付け
+- `src/youtube.js`を作成し、コードを貼り付け
 - `API_KEY`に別途配布している Token を設定
 - 自動的に保存にチェックを忘れずに
+
+```shell
+touch src/youtube.js
+```
 
 #### src/youtube.js
 
@@ -168,16 +178,27 @@ const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
+const MAX_RESULTS = 50;
+
+// async-awaitについてはあまり深く考えない方向で
+async function getChannelInfo(videoId) {
+  try {
+    const response = await axios.get(
+      `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
+    );
+    console.log(response.data);
+    // こうすると全ての構造を確認できる
+    // console.log(JSON.stringify(response.data, null, 2));
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 const videoId = "2dldq7XQdIo";
-const response = await axios.get(
-  `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
-);
-
-console.log(response.data);
+getChannelInfo(videoId);
 ```
 
-メモ：
+##### メモ：
 
 - 使用する技術
   - [パッケージ読込](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E8%AA%AD%E8%BE%BC)
@@ -192,7 +213,7 @@ console.log(response.data);
 正しく取れるか確認しましょう。
 
 ```Shell
-node youtube.js
+node src/youtube.js
 ```
 
 ---
@@ -208,7 +229,7 @@ node youtube.js
 npm run format
 ```
 
-メモ
+##### メモ
 
 - 公式
   - [prettier](https://prettier.io/)
@@ -228,14 +249,31 @@ const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
+const MAX_RESULTS = 50;
 // 切出し
 const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
+async function getChannelInfo(videoId) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
+    );
+    console.log(response.data);
+    // こうすると全ての構造を確認できる
+    // console.log(JSON.stringify(response.data, null, 2));
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 const videoId = "2dldq7XQdIo";
-const response = await axios.get(
-  `${BASE_URL}/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
-);
-console.log(response.data);
+getChannelInfo(videoId);
+```
+
+### フォーマット＆実行
+
+```Shell
+npm run format && node src/youtube.js
 ```
 
 ---
@@ -250,63 +288,36 @@ const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
+const MAX_RESULTS = 50;
 const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
-const videoId = "2dldq7XQdIo";
-const response = await axios.get(`${BASE_URL}/videos`, {
-  params: {
-    key: API_KEY,
-    id: videoId,
-    part: "snippet",
-    maxResults: 1,
-  },
-});
-console.log(response.data);
-```
-
----
-
-### 関数化
-
-このまま呼び出す順に処理を追加しても完成しますが、それだとメンテナンス性が悪いので処理の関数化に挑戦してみましょう。  
-具体的には`async function getAbc() {}`のようにします。
-
-```javascript
-function getAbc(str) {
-  console.log(str);
+async function getChannelInfo(videoId) {
+  try {
+    // 引数をパラメータ化
+    const response = await axios.get(`${BASE_URL}/videos`, {
+      params: {
+        key: API_KEY,
+        id: videoId,
+        part: "snippet",
+        maxResults: 1,
+      },
+    });
+    console.log(response.data);
+    // こうすると全ての構造を確認できる
+    // console.log(JSON.stringify(response.data, null, 2));
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-// function getAbcの呼び出し
-getAbc("abc");
-// abc
+const videoId = "2dldq7XQdIo";
+getChannelInfo(videoId);
 ```
 
-実際に適応するとこのような形になるかと思います。
+### フォーマット＆実行
 
-```javascript
-// axiosパッケージ読込
-const axios = require("axios");
-
-// YouTube API KEY
-const API_KEY = "";
-const BASE_URL = "https://www.googleapis.com/youtube/v3";
-
-const videoId = "2dldq7XQdIo";
-
-// function getAbc() {}で処理を
-async function getAbc() {
-  const response = await axios.get(`${BASE_URL}/videos`, {
-    params: {
-      key: API_KEY,
-      id: videoId,
-      part: "snippet",
-      maxResults: 1,
-    },
-  });
-  console.log(response.data);
-}
-
-getAbc();
+```Shell
+npm run format && node src/youtube.js
 ```
 
 ---
@@ -331,25 +342,31 @@ const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
+const MAX_RESULTS = 50;
 const BASE_URL = "http://localhost:8080";
 // const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
-const videoId = "2dldq7XQdIo";
-
-// function getAbc() {}で処理を
-async function getAbc() {
-  const response = await axios.get(`${BASE_URL}/videos`, {
-    params: {
-      key: API_KEY,
-      id: videoId,
-      part: "snippet",
-      maxResults: 1,
-    },
-  });
-  console.log(response.data);
+async function getChannelInfo(videoId) {
+  try {
+    // 引数をパラメータ化
+    const response = await axios.get(`${BASE_URL}/videos`, {
+      params: {
+        key: API_KEY,
+        id: videoId,
+        part: "snippet",
+        maxResults: 1,
+      },
+    });
+    console.log(response.data);
+    // こうすると全ての構造を確認できる
+    // console.log(JSON.stringify(response.data, null, 2));
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-getAbc();
+const videoId = "2dldq7XQdIo";
+getChannelInfo(videoId);
 ```
 
 元のターミナルに戻って動作が変わらないことを確認しましょう。
@@ -358,7 +375,7 @@ getAbc();
 node youtube.js
 ```
 
-メモ
+##### メモ
 
 - 公式
   - [json-server](https://github.com/typicode/json-server)
@@ -382,9 +399,9 @@ const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
+const MAX_RESULTS = 50;
 const BASE_URL = "http://localhost:8080";
 // const BASE_URL = "https://www.googleapis.com/youtube/v3";
-const MAX_RESULTS = 50:
 
 async function getAbc() {
   // 省略
@@ -675,7 +692,7 @@ async function getVideoIdMultiList(channelId) {
 }
 ```
 
-メモ
+##### メモ
 
 - 使用する技術
   - [ループ](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E3%83%AB%E3%83%BC%E3%83%97)
@@ -727,7 +744,7 @@ async function getVideoIdMultiList(channelId) {
 }
 ```
 
-メモ
+##### メモ
 
 - 使用する技術
   - [配列に追加](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E9%85%8D%E5%88%97%E3%81%AB%E8%BF%BD%E5%8A%A0)
