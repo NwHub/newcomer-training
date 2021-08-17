@@ -272,7 +272,7 @@ getChannelInfo(videoId);
 
 ### フォーマット＆実行
 
-```Shell
+```zsh
 npm run format && node src/youtube.js
 ```
 
@@ -326,11 +326,13 @@ npm run format && node src/youtube.js
 
 YouTubeApi はクォータと呼ばれる使用制限があるため、YouTubeAPI に何度も接続すると 1 日のインターバルが発生します。  
 しかし開発中は何度も接続する必要がでてきます。  
-そこで簡単にサーバーを立ち上げることが出来る`json-server` を利用して、モックデータを取得するようにすることで解決します。
+そこで簡単にサーバーを立ち上げることが出来る`json-server` を利用して、モックデータを取得するようにすることで解決します。  
+本当に簡易的に作っているので、id での検索などはできず、常に同じものが返ってきますが、とりあえず用は足ります。（必要に応じて YouTube 本番に繋げましょう）
 
 例によって設定はしておいたので`新しく違うターミナルを立ち上げて`、json-server を起動してみましょう。
 
 ```shell
+cd youtube-api
 npm run json-server
 ```
 
@@ -343,7 +345,7 @@ const axios = require("axios");
 // YouTube API KEY
 const API_KEY = "";
 const MAX_RESULTS = 50;
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://localhost:3000";
 // const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
 async function getChannelInfo(videoId) {
@@ -369,7 +371,7 @@ const videoId = "2dldq7XQdIo";
 getChannelInfo(videoId);
 ```
 
-元のターミナルに戻って動作が変わらないことを確認しましょう。
+元のターミナルに戻って動作が（ほぼ）変わらないことを確認しましょう。
 
 ```Shell
 node youtube.js
@@ -400,15 +402,12 @@ const axios = require("axios");
 // YouTube API KEY
 const API_KEY = "";
 const MAX_RESULTS = 50;
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://localhost:3000";
 // const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
-async function getAbc() {
+async function getChannelInfo(videoId) {
   // 省略
 }
-
-// これは不要なので消す
-// getAbc();
 
 // 追加
 async function getYouTubeInfo(videoId) {
@@ -428,7 +427,19 @@ async function getYouTubeInfo(videoId) {
 
 const videoId = "2dldq7XQdIo";
 getYouTubeInfo(videoId);
+
+// これは不要なので消す
+// const videoId = "2dldq7XQdIo";
+// getChannelInfo(videoId);
 ```
+
+#### フォーマット＆実行
+
+```Shell
+npm run format && node src/youtube.js
+```
+
+##### メモ
 
 - 使用する技術
   - [json](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#json)
@@ -437,38 +448,56 @@ getYouTubeInfo(videoId);
 
 ## lesson03-チャンネル情報を取得-
 
-### 関数の定義
+チャンネル情報を取得する関数を作りましょう。  
+半分くらい lesson01 で作っています。
 
-lesson01 で作成した abc が利用できる形なので、関数名を修正しましょう
+### getYouTubeInfo から`getChannelInfo`を呼び出す
+
+- `getYouTubeInfo`から`getChannelInfo`を呼び出すように修正
 
 ```javascript
 // 省略
 
-// getAbc() → getChannelInfo(videoId)に修正（関数名は仕様書をみてね）
 async function getChannelInfo(videoId) {
-  const response = await axios.get(`${BASE_URL}/videos`, {
-    params: {
-      key: API_KEY,
-      id: videoId,
-      part: "snippet",
-      maxResults: 1,
-    },
-  });
-  console.log(response.data);
+  // 省略
 }
 
-function getYouTubeInfo(videoId) {
-  // 省略
+// asyncを追加
+async function getYouTubeInfo(videoId) {
+  // getChannelInfoを呼び出すように修正
+  // 1-1. チャンネル情報取得の呼び出し
+  const channelInfo = await getChannelInfo(videoId);
+
+  // 1-2. 動画 ID リスト取得の呼び出し
+  // 1-3. 動画情報 リスト取得の呼び出し
+
+  // 返却値
+  const youTubeInfo = {
+    channelInfo: {},
+    videoInfoList: [],
+  };
+  // デバッグ
+  console.log(`youTubeInfo : ${youTubeInfo}`);
+  return youTubeInfo;
 }
 
 getYouTubeInfo(videoId);
 ```
 
+#### フォーマット＆実行
+
+```Shell
+npm run format && node src/youtube.js
+```
+
+- 使用する技術
+  - [async/await](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#asyncawait)
+
 ---
 
 ### 返却値の設定
 
-`getChannelInfo`の返却値を作り込みます。
+lesson01 で作成した `getChannelInfo` が利用できる形なので、返却値の処理を追加していきましょう。
 
 ```javascript
 // 省略
@@ -500,47 +529,16 @@ function getYouTubeInfo(videoId) {
 getYouTubeInfo(videoId);
 ```
 
-- 使用する技術
-  - [json](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#json)
-  - [async/await](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#asyncawait)
+#### フォーマット＆実行
 
----
-
-### getYouTubeInfo から`getChannelInfo`を呼び出す
-
-- `getYouTubeInfo`から`getChannelInfo`を呼び出すように修正
-- `getYouTubeInfo`に`async`を追加
-
-```javascript
-// 省略
-
-async function getChannelInfo(videoId) {
-  // 省略
-}
-
-// asyncを追加
-async function getYouTubeInfo(videoId) {
-  // getChannelInfoを呼び出すように修正
-  // 1-1. チャンネル情報取得の呼び出し
-  const channelInfo = await getChannelInfo(videoId);
-
-  // 1-2. 動画 ID リスト取得の呼び出し
-  // 1-3. 動画情報 リスト取得の呼び出し
-
-  // 返却値
-  const youTubeInfo = {
-    channelInfo: {},
-    videoInfoList: [],
-  };
-  // デバッグ
-  console.log(`youTubeInfo : ${youTubeInfo}`);
-  return youTubeInfo;
-}
-
-getYouTubeInfo(videoId);
+```Shell
+npm run format && node src/youtube.js
 ```
 
+##### メモ
+
 - 使用する技術
+  - [json](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#json)
   - [async/await](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#asyncawait)
 
 ---
@@ -645,7 +643,7 @@ YouTubeApi では一回に取得出来る最大件数は 50 件なので、た�
 ```javascript
 // 省略
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://localhost:3000";
 // const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
 // 追加
