@@ -205,6 +205,7 @@ getChannelInfo(videoId);
   - [変数](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E5%A4%89%E6%95%B0)
   - [文字列結合](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E6%96%87%E5%AD%97%E5%88%97%E7%B5%90%E5%90%88)
   - console.log
+  - [async/await](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#asyncawait)
 
 ---
 
@@ -395,6 +396,9 @@ node youtube.js
 
 ### 関数の定義
 
+- `getYouTubeInfo`の追加
+- 不要な呼び出しを削除
+
 ```javascript
 // axiosパッケージ読込
 const axios = require("axios");
@@ -410,8 +414,12 @@ async function getChannelInfo(videoId) {
 }
 
 // 追加
+// getYouTubeInfoを追加
+// ついでにgetChannelInfoを呼び出すようにする
 async function getYouTubeInfo(videoId) {
   // 1-1. チャンネル情報取得の呼び出し
+  const channelInfo = await getChannelInfo(videoId);
+
   // 1-2. 動画 ID リスト取得の呼び出し
   // 1-3. 動画情報 リスト取得の呼び出し
 
@@ -451,50 +459,6 @@ npm run format && node src/youtube.js
 チャンネル情報を取得する関数を作りましょう。  
 半分くらい lesson01 で作っています。
 
-### getYouTubeInfo から`getChannelInfo`を呼び出す
-
-- `getYouTubeInfo`から`getChannelInfo`を呼び出すように修正
-
-```javascript
-// 省略
-
-async function getChannelInfo(videoId) {
-  // 省略
-}
-
-// asyncを追加
-async function getYouTubeInfo(videoId) {
-  // getChannelInfoを呼び出すように修正
-  // 1-1. チャンネル情報取得の呼び出し
-  const channelInfo = await getChannelInfo(videoId);
-
-  // 1-2. 動画 ID リスト取得の呼び出し
-  // 1-3. 動画情報 リスト取得の呼び出し
-
-  // 返却値
-  const youTubeInfo = {
-    channelInfo: {},
-    videoInfoList: [],
-  };
-  // デバッグ
-  console.log(`youTubeInfo : ${youTubeInfo}`);
-  return youTubeInfo;
-}
-
-getYouTubeInfo(videoId);
-```
-
-#### フォーマット＆実行
-
-```Shell
-npm run format && node src/youtube.js
-```
-
-- 使用する技術
-  - [async/await](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#asyncawait)
-
----
-
 ### 返却値の設定
 
 lesson01 で作成した `getChannelInfo` が利用できる形なので、返却値の処理を追加していきましょう。
@@ -526,6 +490,7 @@ function getYouTubeInfo(videoId) {
   // 省略
 }
 
+const videoId = "2dldq7XQdIo";
 getYouTubeInfo(videoId);
 ```
 
@@ -552,14 +517,18 @@ npm run format && node src/youtube.js
 ```javascript
 // 省略
 
-async function getChannelInfo(videoId) {
-  // 省略
+// 追加
+async function getVideoIdMultiList(channelId) {
+  return [[]];
 }
 
-// 追加
-async function getVideoIdMultiList(channelId) {}
-
 async function getYouTubeInfo(videoId) {
+  // 省略
+
+  // getVideoIdMultiListを呼び出すように修正
+  // 1-2. 動画 ID リスト取得の呼び出し
+  const videoIdMultiList = await getVideoIdMultiList(channelInfo.channelId)；
+
   // 省略
 }
 
@@ -572,6 +541,7 @@ getYouTubeInfo(videoId);
 
 ```javascript
 async function getVideoIdMultiList(channelId) {
+  // 追加
   try {
     const response = await axios.get(`${BASE_URL}/search`, {
       params: {
@@ -590,6 +560,7 @@ async function getVideoIdMultiList(channelId) {
   } catch (error) {
     console.log(error);
   }
+  return [[]];
 }
 ```
 
@@ -621,6 +592,7 @@ async function getVideoIdMultiList(channelId) {
   } catch (error) {
     console.log(error);
   }
+  return [[]];
 }
 ```
 
@@ -748,46 +720,6 @@ async function getVideoIdMultiList(channelId) {
   - [配列に追加](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E9%85%8D%E5%88%97%E3%81%AB%E8%BF%BD%E5%8A%A0)
 
 ---
-
-### getYouTubeInfo から`getVideoIdMultiList`を呼び出す
-
-- `getYouTubeInfo`から`getVideoIdMultiList`を呼び出すように修正
-
-```javascript
-// 省略
-
-async function getChannelInfo(videoId) {
-  // 省略
-}
-async function getVideoIdMultiList(channelId) {
-  // 省略
-}
-
-async function getYouTubeInfo(videoId) {
-
-  // 1-1. チャンネル情報取得の呼び出し
-  const channelInfo = await getChannelInfo(videoId);
-
-  // getVideoIdMultiListを呼び出すように修正
-  // 1-2. 動画 ID リスト取得の呼び出し
-  const videoIdMultiList = await getVideoIdMultiList(channelInfo.channelId)；
-  console.log(videoIdMultiList);
-
-  // 1-3. 動画情報 リスト取得の呼び出し
-
-
-  // 返却値
-  const youTubeInfo = {
-    channelInfo: {},
-    videoInfoList: [],
-  };
-  // デバッグ
-  console.log(`youTubeInfo : ${youTubeInfo}`);
-  return youTubeInfo;
-}
-
-getYouTubeInfo(videoId);
-```
 
 ## lesson05-動画情報 リスト取得-
 
