@@ -23,7 +23,7 @@ https://github.com/NwHub/newcomer-training/issues
 
 ## Paiza Cloud 登録
 
-Paiza Cloud に登録しましょう。（と言っていも GitHub アカウントと連携するだけ）
+Paiza Cloud に登録しましょう。（GitHub アカウントと連携するだけ）
 
 #### [https://paiza.cloud/signup](https://paiza.cloud/signup)
 
@@ -51,7 +51,8 @@ GUI からターミナルを開きます。
 
 #### npm の更新
 
-なにも考えずターミルで以下のコマンドを実行してください。
+なにも考えずターミルで以下のコマンドを実行してください。  
+npm がアップデートされます。
 
 ```shell
 npm install -g npm
@@ -73,6 +74,8 @@ touch test.js
 
 ##### その際ファイルの保存を忘れずに！（自動保存にチェックを入れておいた方がよい）
 
+![image](https://user-images.githubusercontent.com/1374058/129496394-189599c6-1175-49bb-b026-3d4d70af872a.png)
+
 #### test.js
 
 ```javascript
@@ -83,8 +86,10 @@ console.log("YouTube");
 
 ### JS ファイルを実行
 
-`node ファイル名`で JavaScript を実行します。  
+ターミナルで`node ファイル名`と入力して JavaScript を実行します。  
 `YouTube`と表示されれば成功です。
+
+![image](https://user-images.githubusercontent.com/1374058/129496472-7e119e4e-2064-431f-84f9-4132f55fb80f.png)
 
 ```Shell
 node test.js
@@ -125,22 +130,15 @@ npm install
 
 ### Axios の導入
 
-プロジェクトルートで`npm install axios`を実行してインストールします。  
-これだけで`axios`のパッケージが導入されます、すごいですね。
-
-メモ：
-
-- 使用する技術
-  - [node](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#nodejs%E3%83%8E%E3%83%BC%E3%83%89-%E3%81%A8%E3%81%AF)
-  - [npm](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#npm-%E3%81%A8%E3%81%AF)
-- 公式ページ
-  - [Axios](https://axios-http.com/)
+今回は YouTubeAPI に接続するために `Axios`というパッケージを使います。  
+プロジェクトルートで`npm install axios`を実行してインストールしましょう。
 
 ```Shell
 npm install axios
 ```
 
-`package.json`を確認すると導入されたことが確認できる
+`package.json`を確認すると導入されたことが確認できる  
+![image](https://user-images.githubusercontent.com/1374058/129496891-c7d69f32-1494-4e9e-b113-96aba5e232ab.png)
 
 ```json
 "dependencies": {
@@ -148,15 +146,29 @@ npm install axios
 }
 ```
 
+これだけで`Axios`のパッケージが導入されます、すごいですね。
+
+##### メモ：
+
+- 使用する技術
+  - [node](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#nodejs%E3%83%8E%E3%83%BC%E3%83%89-%E3%81%A8%E3%81%AF)
+  - [npm](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#npm-%E3%81%A8%E3%81%AF)
+- 公式ページ
+  - [Axios](https://axios-http.com/)
+
 ---
 
 ### API に接続
 
-早速 YouTubeAPI と疎通しましょう。
+早速 YouTubeAPI と疎通してみましょう。
 
-- `src/youtube.js`にコードを貼り付け
+- `src/youtube.js`を作成し、コードを貼り付け
 - `API_KEY`に別途配布している Token を設定
 - 自動的に保存にチェックを忘れずに
+
+```shell
+touch src/youtube.js
+```
 
 #### src/youtube.js
 
@@ -166,22 +178,34 @@ const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
+const MAX_RESULTS = 50;
+
+// async-awaitについてはあまり深く考えない方向で
+async function getChannelInfo(videoId) {
+  try {
+    const response = await axios.get(
+      `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
+    );
+    console.log(response.data);
+    // こうすると全ての構造を確認できる
+    // console.log(JSON.stringify(response.data, null, 2));
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 const videoId = "2dldq7XQdIo";
-const response = await axios.get(
-  `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
-);
-
-console.log(response.data);
+getChannelInfo(videoId);
 ```
 
-メモ：
+##### メモ：
 
 - 使用する技術
   - [パッケージ読込](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E8%AA%AD%E8%BE%BC)
   - [変数](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E5%A4%89%E6%95%B0)
   - [文字列結合](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E6%96%87%E5%AD%97%E5%88%97%E7%B5%90%E5%90%88)
   - console.log
+  - [async/await](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#asyncawait)
 
 ---
 
@@ -190,7 +214,7 @@ console.log(response.data);
 正しく取れるか確認しましょう。
 
 ```Shell
-node youtube.js
+node src/youtube.js
 ```
 
 ---
@@ -206,7 +230,7 @@ node youtube.js
 npm run format
 ```
 
-メモ
+##### メモ
 
 - 公式
   - [prettier](https://prettier.io/)
@@ -226,14 +250,31 @@ const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
+const MAX_RESULTS = 50;
 // 切出し
 const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
+async function getChannelInfo(videoId) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
+    );
+    console.log(response.data);
+    // こうすると全ての構造を確認できる
+    // console.log(JSON.stringify(response.data, null, 2));
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 const videoId = "2dldq7XQdIo";
-const response = await axios.get(
-  `${BASE_URL}/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
-);
-console.log(response.data);
+getChannelInfo(videoId);
+```
+
+### フォーマット＆実行
+
+```zsh
+npm run format && node src/youtube.js
 ```
 
 ---
@@ -248,63 +289,36 @@ const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
+const MAX_RESULTS = 50;
 const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
-const videoId = "2dldq7XQdIo";
-const response = await axios.get(`${BASE_URL}/videos`, {
-  params: {
-    key: API_KEY,
-    id: videoId,
-    part: "snippet",
-    maxResults: 1,
-  },
-});
-console.log(response.data);
-```
-
----
-
-### 関数化
-
-このまま呼び出す順に処理を追加しても完成しますが、それだとメンテナンス性が悪いので処理の関数化に挑戦してみましょう。  
-具体的には`async function getAbc() {}`のようにします。
-
-```javascript
-function getAbc(str) {
-  console.log(str);
+async function getChannelInfo(videoId) {
+  try {
+    // 引数をパラメータ化
+    const response = await axios.get(`${BASE_URL}/videos`, {
+      params: {
+        key: API_KEY,
+        id: videoId,
+        part: "snippet",
+        maxResults: 1,
+      },
+    });
+    console.log(response.data);
+    // こうすると全ての構造を確認できる
+    // console.log(JSON.stringify(response.data, null, 2));
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-// function getAbcの呼び出し
-getAbc("abc");
-// abc
+const videoId = "2dldq7XQdIo";
+getChannelInfo(videoId);
 ```
 
-実際に適応するとこのような形になるかと思います。
+### フォーマット＆実行
 
-```javascript
-// axiosパッケージ読込
-const axios = require("axios");
-
-// YouTube API KEY
-const API_KEY = "";
-const BASE_URL = "https://www.googleapis.com/youtube/v3";
-
-const videoId = "2dldq7XQdIo";
-
-// function getAbc() {}で処理を
-async function getAbc() {
-  const response = await axios.get(`${BASE_URL}/videos`, {
-    params: {
-      key: API_KEY,
-      id: videoId,
-      part: "snippet",
-      maxResults: 1,
-    },
-  });
-  console.log(response.data);
-}
-
-getAbc();
+```Shell
+npm run format && node src/youtube.js
 ```
 
 ---
@@ -313,11 +327,13 @@ getAbc();
 
 YouTubeApi はクォータと呼ばれる使用制限があるため、YouTubeAPI に何度も接続すると 1 日のインターバルが発生します。  
 しかし開発中は何度も接続する必要がでてきます。  
-そこで簡単にサーバーを立ち上げることが出来る`json-server` を利用して、モックデータを取得するようにすることで解決します。
+そこで簡単にサーバーを立ち上げることが出来る`json-server` を利用して、モックデータを取得するようにすることで解決します。  
+本当に簡易的に作っているので、id での検索などはできず、常に同じものが返ってきますが、とりあえず用は足ります。（必要に応じて YouTube 本番に繋げましょう）
 
 例によって設定はしておいたので`新しく違うターミナルを立ち上げて`、json-server を起動してみましょう。
 
 ```shell
+cd youtube-api
 npm run json-server
 ```
 
@@ -329,34 +345,40 @@ const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
-const BASE_URL = "http://localhost:8080";
+const MAX_RESULTS = 50;
+const BASE_URL = "http://localhost:3000";
 // const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
-const videoId = "2dldq7XQdIo";
-
-// function getAbc() {}で処理を
-async function getAbc() {
-  const response = await axios.get(`${BASE_URL}/videos`, {
-    params: {
-      key: API_KEY,
-      id: videoId,
-      part: "snippet",
-      maxResults: 1,
-    },
-  });
-  console.log(response.data);
+async function getChannelInfo(videoId) {
+  try {
+    // 引数をパラメータ化
+    const response = await axios.get(`${BASE_URL}/videos`, {
+      params: {
+        key: API_KEY,
+        id: videoId,
+        part: "snippet",
+        maxResults: 1,
+      },
+    });
+    console.log(response.data);
+    // こうすると全ての構造を確認できる
+    // console.log(JSON.stringify(response.data, null, 2));
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-getAbc();
+const videoId = "2dldq7XQdIo";
+getChannelInfo(videoId);
 ```
 
-元のターミナルに戻って動作が変わらないことを確認しましょう。
+元のターミナルに戻って動作が（ほぼ）変わらないことを確認しましょう。
 
 ```Shell
 node youtube.js
 ```
 
-メモ
+##### メモ
 
 - 公式
   - [json-server](https://github.com/typicode/json-server)
@@ -374,42 +396,58 @@ node youtube.js
 
 ### 関数の定義
 
+- `getYouTubeInfo`の追加
+- 不要な呼び出しを削除
+
 ```javascript
 // axiosパッケージ読込
 const axios = require("axios");
 
 // YouTube API KEY
 const API_KEY = "";
-const BASE_URL = "http://localhost:8080";
+const MAX_RESULTS = 50;
+const BASE_URL = "http://localhost:3000";
 // const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
-const videoId = "2dldq7XQdIo";
-
-async function getAbc() {
+async function getChannelInfo(videoId) {
   // 省略
 }
 
-// これは不要なので消す
-// getAbc();
-
 // 追加
-function getYouTubeInfo(videoId) {
+// getYouTubeInfoを追加
+// ついでにgetChannelInfoを呼び出すようにする
+async function getYouTubeInfo(videoId) {
   // 1-1. チャンネル情報取得の呼び出し
+  const channelInfo = await getChannelInfo(videoId);
+
   // 1-2. 動画 ID リスト取得の呼び出し
   // 1-3. 動画情報 リスト取得の呼び出し
 
   // 返却値
   const youTubeInfo = {
     channelInfo: {},
-    videoDataList: [],
+    videoInfoList: [],
   };
   // デバッグ
   console.log(`youTubeInfo : ${youTubeInfo}`);
   return youTubeInfo;
 }
 
+const videoId = "2dldq7XQdIo";
 getYouTubeInfo(videoId);
+
+// これは不要なので消す
+// const videoId = "2dldq7XQdIo";
+// getChannelInfo(videoId);
 ```
+
+#### フォーマット＆実行
+
+```Shell
+npm run format && node src/youtube.js
+```
+
+##### メモ
 
 - 使用する技術
   - [json](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#json)
@@ -418,37 +456,12 @@ getYouTubeInfo(videoId);
 
 ## lesson03-チャンネル情報を取得-
 
-### 関数の定義
-
-lesson01 で作成した abc が利用できる形なので、関数名を修正しましょう
-
-```javascript
-// 省略
-
-// getAbc() → getChannelInfo(videoId)に修正（関数名は仕様書をみてね）
-async function getChannelInfo(videoId) {
-  const response = await axios.get(`${BASE_URL}/videos`, {
-    params: {
-      key: API_KEY,
-      id: videoId,
-      part: "snippet",
-      maxResults: 1,
-    },
-  });
-  console.log(response.data);
-}
-function getYouTubeInfo(videoId) {
-  // 省略
-}
-
-getYouTubeInfo(videoId);
-```
-
----
+チャンネル情報を取得する関数を作りましょう。  
+半分くらい lesson01 で作っています。
 
 ### 返却値の設定
 
-`getChannelInfo`の返却値を作り込みます。
+lesson01 で作成した `getChannelInfo` が利用できる形なので、返却値の処理を追加していきましょう。
 
 ```javascript
 // 省略
@@ -477,50 +490,20 @@ function getYouTubeInfo(videoId) {
   // 省略
 }
 
+const videoId = "2dldq7XQdIo";
 getYouTubeInfo(videoId);
 ```
+
+#### フォーマット＆実行
+
+```Shell
+npm run format && node src/youtube.js
+```
+
+##### メモ
 
 - 使用する技術
   - [json](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#json)
-  - [async/await](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#asyncawait)
-
----
-
-### getYouTubeInfo から`getChannelInfo`を呼び出す
-
-- `getYouTubeInfo`から`getChannelInfo`を呼び出すように修正
-- `getYouTubeInfo`に`async`を追加
-
-```javascript
-// 省略
-
-async function getChannelInfo(videoId) {
-  // 省略
-}
-
-// asyncを追加
-async function getYouTubeInfo(videoId) {
-  // getChannelInfoを呼び出すように修正
-  // 1-1. チャンネル情報取得の呼び出し
-  const channelInfo = await getChannelInfo(videoId);
-
-  // 1-2. 動画 ID リスト取得の呼び出し
-  // 1-3. 動画情報 リスト取得の呼び出し
-
-  // 返却値
-  const youTubeInfo = {
-    channelInfo: {},
-    videoDataList: [],
-  };
-  // デバッグ
-  console.log(`youTubeInfo : ${youTubeInfo}`);
-  return youTubeInfo;
-}
-
-getYouTubeInfo(videoId);
-```
-
-- 使用する技術
   - [async/await](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#asyncawait)
 
 ---
@@ -534,14 +517,18 @@ getYouTubeInfo(videoId);
 ```javascript
 // 省略
 
-async function getChannelInfo(videoId) {
-  // 省略
+// 追加
+async function getVideoIdMultiList(channelId) {
+  return [[]];
 }
 
-// 追加
-async function getVideoIdMultiList(channelId) {}
-
 async function getYouTubeInfo(videoId) {
+  // 省略
+
+  // getVideoIdMultiListを呼び出すように修正
+  // 1-2. 動画 ID リスト取得の呼び出し
+  const videoIdMultiList = await getVideoIdMultiList(channelInfo.channelId)；
+
   // 省略
 }
 
@@ -554,6 +541,7 @@ getYouTubeInfo(videoId);
 
 ```javascript
 async function getVideoIdMultiList(channelId) {
+  // 追加
   try {
     const response = await axios.get(`${BASE_URL}/search`, {
       params: {
@@ -562,7 +550,7 @@ async function getVideoIdMultiList(channelId) {
         part: "id",
         order: "date",
         type: "video",
-        maxResults: 50,
+        maxResults: MAX_RESULTS,
         // 後で設定する
         // pageToken: nextPageToken,
       },
@@ -572,6 +560,7 @@ async function getVideoIdMultiList(channelId) {
   } catch (error) {
     console.log(error);
   }
+  return [[]];
 }
 ```
 
@@ -591,7 +580,7 @@ async function getVideoIdMultiList(channelId) {
         part: "id",
         order: "date",
         type: "video",
-        maxResults: 50,
+        maxResults: MAX_RESULTS,
         // 後で設定する
         // pageToken: nextPageToken,
       },
@@ -603,6 +592,7 @@ async function getVideoIdMultiList(channelId) {
   } catch (error) {
     console.log(error);
   }
+  return [[]];
 }
 ```
 
@@ -613,6 +603,10 @@ async function getVideoIdMultiList(channelId) {
 
 ### 最大件数になるまで取得するように処理を追加
 
+YouTubeApi では一回に取得出来る最大件数は 50 件なので、たとえば 100 件欲しい場合は 2 回取得することになります。  
+加えて、何万件もある可能性があるので、取得件数に制限を儲ける必要もあります。  
+そこで今回は「取得する最大件数を決めて、件数に達するまでループする」という処理にします。
+
 - `MAX_VIDEO_COUNT`の定数を定義
 - `getVideoIdMultiList`の変数として、取得件数の合計を保持する`videoCount`を定義
 - `videoCount`に件数を加算する処理を追加
@@ -621,7 +615,7 @@ async function getVideoIdMultiList(channelId) {
 ```javascript
 // 省略
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://localhost:3000";
 // const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
 // 追加
@@ -645,7 +639,7 @@ async function getVideoIdMultiList(channelId) {
           part: "id",
           order: "date",
           type: "video",
-          maxResults: 50,
+          maxResults: MAX_RESULTS,
           // 追加
           pageToken: nextPageToken,
         },
@@ -668,7 +662,7 @@ async function getVideoIdMultiList(channelId) {
 }
 ```
 
-メモ
+##### メモ
 
 - 使用する技術
   - [ループ](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E3%83%AB%E3%83%BC%E3%83%97)
@@ -696,7 +690,7 @@ async function getVideoIdMultiList(channelId) {
           part: "id",
           order: "date",
           type: "video",
-          maxResults: 50,
+          maxResults: MAX_RESULTS,
           pageToken: nextPageToken,
         },
       });
@@ -720,52 +714,12 @@ async function getVideoIdMultiList(channelId) {
 }
 ```
 
-メモ
+##### メモ
 
 - 使用する技術
   - [配列に追加](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E9%85%8D%E5%88%97%E3%81%AB%E8%BF%BD%E5%8A%A0)
 
 ---
-
-### getYouTubeInfo から`getVideoIdMultiList`を呼び出す
-
-- `getYouTubeInfo`から`getVideoIdMultiList`を呼び出すように修正
-- `getYouTubeInfo`に`async`を追加
-
-```javascript
-// 省略
-
-async function getChannelInfo(videoId) {
-  // 省略
-}
-async function getVideoIdMultiList(channelId) {
-  // 省略
-}
-
-async function getYouTubeInfo(videoId) {
-
-  // 1-1. チャンネル情報取得の呼び出し
-  const channelInfo = await getChannelInfo(videoId);
-
-  // getVideoIdMultiListを呼び出すように修正
-  // 1-2. 動画 ID リスト取得の呼び出し
-  const videoIdMultiList = await getVideoIdMultiList(channelInfo.channelId)；
-  console.log(videoIdMultiList);
-
-  // 1-3. 動画情報 リスト取得の呼び出し
-
-  // 返却値
-  const youTubeInfo = {
-    channelInfo: {},
-    videoDataList: [],
-  };
-  // デバッグ
-  console.log(`youTubeInfo : ${youTubeInfo}`);
-  return youTubeInfo;
-}
-
-getYouTubeInfo(videoId);
-```
 
 ## lesson05-動画情報 リスト取得-
 
@@ -776,40 +730,38 @@ getYouTubeInfo(videoId);
 ```javascript
 // 省略
 
-async function getChannelInfo(videoId) {
-  // 省略
-}
-
 async function getVideoIdMultiList(channelId) {
   // 省略
 }
 
 // 追加
-async function getVideoInfoList(videoIdMultiList) {}
-
+async function getVideoInfoList(videoIdMultiList) {
+  return [];
+}
 async function getYouTubeInfo(videoId) {
   // 省略
-}
 
-getYouTubeInfo(videoId);
+  // 1-3. 動画情報 リスト取得の呼び出し
+  // 追加
+  const videoInfoList = getVideoInfoList(videoIdMultiList);
+
+  // 省略
+}
 ```
 
 ---
 
-### 関数の定義
-
-- `getVideoInfoList`を追加する
+### YouTubeAPI の呼び出し処理
 
 ```javascript
 async function getVideoInfoList(videoIdMultiList) {
   try {
-    const commaVideoIdList = videoIdList.join(",");
     const response = await axios.get(`${BASE_URL}/videos`, {
       params: {
         key: KEY,
-        id: commaVideoIdList,
+        id: "2CXvkGbiwbs,DQ5IquyRCNI",
         part: "snippet,statistics",
-        maxResults: 50,
+        maxResults: MAX_RESULTS,
       },
     });
 
@@ -817,12 +769,128 @@ async function getVideoInfoList(videoIdMultiList) {
   } catch (error) {
     console.log(error);
   }
+  return [];
 }
 ```
 
+---
+
+### ループ化
+
+```javascript
+async function getVideoInfoList(videoIdMultiList) {
+  // for を追加
+  for (const videoIdList of videoIdMultiList) {
+    try {
+      // 配列を`join`を使ってカンマ繋ぎに変換する
+      const commaVideoIdList = videoIdList.join(",");
+      const response = await axios.get(`${BASE_URL}/videos`, {
+        params: {
+          key: KEY,
+          // 変更
+          id: commaVideoIdList,
+          part: "snippet,statistics",
+          maxResults: MAX_RESULTS,
+        },
+      });
+
+      console.log(JSON.stringify(response.data, null, 2));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  return [];
+}
+```
+
+---
+
+### 返却値の videoInfoList を作成
+
+```javascript
+async function getVideoInfoList(videoIdMultiList) {
+  let videoInfoList = [];
+  for (const videoIdList of videoIdMultiList) {
+    try {
+      const commaVideoIdList = videoIdList.join(",");
+      const response = await axios.get(`${BASE_URL}/videos`, {
+        params: {
+          key: KEY,
+          id: commaVideoIdList,
+          part: "snippet,statistics",
+          maxResults: MAX_RESULTS,
+        },
+      });
+
+      // console.log(JSON.stringify(response.data, null, 2));
+
+      for (item of response.data.items) {
+        const videoInfo = {
+          viewCount: item.statistics.viewCount,
+          likeCount: item.statistics.likeCount,
+          dislikeCount: item.statistics.dislikeCount,
+          commentCount: item.statistics.commentCount,
+          videId: item.id,
+          title: item.snippet.title,
+          publishedAt: item.snippet.publishedAt,
+        };
+        videoInfoList = [...videoInfoList, videoInfo];
+        // もしくは
+        // videoInfoList.push(videoInfo);
+      }
+
+      // 別の方法として、こういうでもいい
+      // const tmpVideoInfoList = response.data.items.map((item) => {
+      //   return {
+      //     viewCount: item.statistics.viewCount,
+      //     likeCount: item.statistics.likeCount,
+      //     dislikeCount: item.statistics.dislikeCount,
+      //     commentCount: item.statistics.commentCount,
+      //     videId: item.id,
+      //     title: item.snippet.title,
+      //     publishedAt: item.snippet.publishedAt,
+      //   };
+      // });
+      // videoInfoList = [...videoInfoList, ...tmpVideoInfoList];
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  console.log(videoInfoList);
+  return videoInfoList;
+}
+```
+
+---
+
 ## lesson06-取得した情報を整形-
 
-###
+### 返却値の修正
+
+1-1 と
+
+```javascript
+async function getYouTubeInfo(videoId) {
+  // 1-1. チャンネル情報取得の呼び出し
+  const channelInfo = await getChannelInfo(videoId);
+
+  // 1-2. 動画 ID リスト取得の呼び出し
+  const videoIdMultiList = await getVideoIdMultiList(channelInfo.channelId)；
+
+  // 1-3. 動画情報 リスト取得の呼び出し
+ const videoInfoList = getVideoInfoList(videoIdMultiList);
+
+  // 変更
+  // 返却値
+  const youTubeInfo = {
+    channelInfo: channelInfo,
+    videoInfoList: videoInfoList,
+  };
+  // デバッグ
+  console.log(`youTubeInfo : ${youTubeInfo}`);
+  return youTubeInfo;
+}
+```
 
 ## lesson06-画面表示-
 
