@@ -429,7 +429,7 @@ async function getYouTubeInfo(videoId) {
     videoInfoList: [],
   };
   // デバッグ
-  console.log(`youTubeInfo : ${youTubeInfo}`);
+  console.log(`youTubeInfo : ${JSON.stringify(youTubeInfo, null, 2)}`);
   return youTubeInfo;
 }
 
@@ -483,6 +483,7 @@ async function getChannelInfo(videoId) {
     channelTitle: response.data.items[0].snippet.channelTitle,
   };
 
+  //console.log(JSON.stringify(jsonObject, null, 2));
   console.log(channelInfo);
   return channelInfo;
 }
@@ -527,7 +528,7 @@ async function getYouTubeInfo(videoId) {
 
   // getVideoIdMultiListを呼び出すように修正
   // 1-2. 動画 ID リスト取得の呼び出し
-  const videoIdMultiList = await getVideoIdMultiList(channelInfo.channelId)；
+  const videoIdMultiList = await getVideoIdMultiList(channelInfo.channelId);
 
   // 省略
 }
@@ -545,7 +546,7 @@ async function getVideoIdMultiList(channelId) {
   try {
     const response = await axios.get(`${BASE_URL}/search`, {
       params: {
-        key: KEY,
+        key: API_KEY,
         channelId: channelId,
         part: "id",
         order: "date",
@@ -575,7 +576,7 @@ async function getVideoIdMultiList(channelId) {
   try {
     const response = await axios.get(`${BASE_URL}/search`, {
       params: {
-        key: KEY,
+        key: API_KEY,
         channelId: channelId,
         part: "id",
         order: "date",
@@ -629,12 +630,14 @@ async function getChannelInfo(videoId) {
 async function getVideoIdMultiList(channelId) {
   // 追加
   let videoCount = 0;
+  let nextPageToken;
+
   // 追加
   while (videoCount < MAX_VIDEO_COUNT) {
     try {
       const response = await axios.get(`${BASE_URL}/search`, {
         params: {
-          key: KEY,
+          key: API_KEY,
           channelId: channelId,
           part: "id",
           order: "date",
@@ -651,7 +654,7 @@ async function getVideoIdMultiList(channelId) {
       videoCount += videoIdList.length;
 
       // 追加
-      const nextPageToken = response.data.nextPageToken;
+      nextPageToken = response.data.nextPageToken;
       if (!nextPageToken) {
         break;
       }
@@ -659,6 +662,7 @@ async function getVideoIdMultiList(channelId) {
       console.log(error);
     }
   }
+  return [[]];
 }
 ```
 
@@ -685,7 +689,7 @@ async function getVideoIdMultiList(channelId) {
     try {
       const response = await axios.get(`${BASE_URL}/search`, {
         params: {
-          key: KEY,
+          key: API_KEY,
           channelId: channelId,
           part: "id",
           order: "date",
@@ -758,7 +762,7 @@ async function getVideoInfoList(videoIdMultiList) {
   try {
     const response = await axios.get(`${BASE_URL}/videos`, {
       params: {
-        key: KEY,
+        key: API_KEY,
         id: "2CXvkGbiwbs,DQ5IquyRCNI",
         part: "snippet,statistics",
         maxResults: MAX_RESULTS,
@@ -786,7 +790,7 @@ async function getVideoInfoList(videoIdMultiList) {
       const commaVideoIdList = videoIdList.join(",");
       const response = await axios.get(`${BASE_URL}/videos`, {
         params: {
-          key: KEY,
+          key: API_KEY,
           // 変更
           id: commaVideoIdList,
           part: "snippet,statistics",
@@ -815,7 +819,7 @@ async function getVideoInfoList(videoIdMultiList) {
       const commaVideoIdList = videoIdList.join(",");
       const response = await axios.get(`${BASE_URL}/videos`, {
         params: {
-          key: KEY,
+          key: API_KEY,
           id: commaVideoIdList,
           part: "snippet,statistics",
           maxResults: MAX_RESULTS,
@@ -875,10 +879,10 @@ async function getYouTubeInfo(videoId) {
   const channelInfo = await getChannelInfo(videoId);
 
   // 1-2. 動画 ID リスト取得の呼び出し
-  const videoIdMultiList = await getVideoIdMultiList(channelInfo.channelId)；
+  const videoIdMultiList = await getVideoIdMultiList(channelInfo.channelId);
 
   // 1-3. 動画情報 リスト取得の呼び出し
- const videoInfoList = getVideoInfoList(videoIdMultiList);
+  const videoInfoList = getVideoInfoList(videoIdMultiList);
 
   // 変更
   // 返却値
@@ -887,7 +891,7 @@ async function getYouTubeInfo(videoId) {
     videoInfoList: videoInfoList,
   };
   // デバッグ
-  console.log(`youTubeInfo : ${youTubeInfo}`);
+  console.log(`youTubeInfo : ${JSON.stringify(youTubeInfo, null, 2)}`);
   return youTubeInfo;
 }
 ```
