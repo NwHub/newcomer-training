@@ -46,7 +46,7 @@ Mac と Windows でコピー＆ペーストのやり方が違うので、以下�
 
 #### ターミナルを開く
 
-GUI からターミナルを開きます。
+GUI からターミナルを開きます。  
 ![image](https://user-images.githubusercontent.com/1374058/127300939-ec11de69-e362-4a00-aa7a-8ac7dd774484.png)
 
 #### npm の更新
@@ -825,3 +825,11 @@ async function getVideoInfoList(videoIdMultiList) {
 ###
 
 ## lesson06-画面表示-
+
+```shell
+cd
+git clone https://github.com/NwHub/vue-chart.git
+cd vue-chart
+npm i
+npm run serve
+```
