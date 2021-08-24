@@ -375,7 +375,7 @@ getChannelInfo(videoId);
 元のターミナルに戻って動作が（ほぼ）変わらないことを確認しましょう。
 
 ```Shell
-node youtube.js
+node src/youtube.js
 ```
 
 ##### メモ
