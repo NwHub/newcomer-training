@@ -467,7 +467,7 @@ async function getChannelInfo(videoId) {
   // console.log(JSON.stringify(jsonObject, null, 2)); でresponseの構造がわかるので、それを参考に設定していく
   const channelInfo = {
     channelId: response.data.items[0].snippet.channelId,
-    channelId: response.data.items[0].snippet.channelTitle,
+    channelTitle: response.data.items[0].snippet.channelTitle,
   };
 
   console.log(channelInfo);
