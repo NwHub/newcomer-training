@@ -10,6 +10,11 @@ https://github.com/NwHub/newcomer-training/issues
 -
 -
 
+## 完成イメージ
+
+動画 URL を入力すると再生数や高評価・低評価などをグラフで表示するサービスです。（チャンネル URL ではなく動画 URL なので注意）
+![Kapture 2021-08-28 at 11 07 24](https://user-images.githubusercontent.com/1374058/131202956-6158d8ff-98bd-4584-899f-759a7656fbe6.gif)
+
 ## 導入
 
 ## GitHub 登録
