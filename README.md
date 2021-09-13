@@ -705,7 +705,7 @@ async function getVideoIdMultiList(channelId) {
       // 追加
       videoIdMultiList = [...videoIdMultiList, videoIdList];
 
-      const nextPageToken = response.data.nextPageToken;
+      nextPageToken = response.data.nextPageToken;
       if (!nextPageToken) {
         break;
       }
