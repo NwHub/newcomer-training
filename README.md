@@ -1,4 +1,4 @@
-# 新人教育プログラム
+# JavaScript Level.0
 
 ## ご意見お待ちしております
 
@@ -15,11 +15,11 @@ https://github.com/NwHub/newcomer-training/issues
 動画 URL を入力すると再生数や高評価・低評価などをグラフで表示するサービスです。（チャンネル URL ではなく動画 URL なので注意）
 ![Kapture 2021-08-28 at 11 07 24](https://user-images.githubusercontent.com/1374058/131202956-6158d8ff-98bd-4584-899f-759a7656fbe6.gif)
 
-## 導入
+## 環境構築
 
 ## GitHub 登録
 
-すでに何らかの GitHub アカウントを持っている人は不要です。  
+すでに GitHub アカウントを持っている人は不要です。  
 未実施の人は登録をお願いします。（会社メールでも OK）
 
 #### [https://github.com/](https://github.com/)
@@ -106,281 +106,81 @@ YouTube
 
 ---
 
-## lesson01 -axios を使って YouTubeAPI に接続-
+## lesson01 - GitHub からテンプレートプロジェクトをクローン -
 
-ウォーミングアップとして軽い JavaScript のコーディングと YouTubeAPI の疎通を試してみましょう。
+GitHub から本日使用するテンプレートを取ってきます
 
 ### GitHub からプロジェクトをクローン
 
-`skeleton`ブランチを指定して、GitHub からコードの雛形をクローンします。  
-雛形の中身はコードフォーマットやモックサーバの設定などがしてありますが、0 から作るのとほぼ変わりません。
+1. `skeleton`ブランチを指定して、GitHub からコードの雛形をクローンします。  
+   雛形の中身ですが、すでに作成済みのコードの一部、コードフォーマットやモックサーバの設定などがしてあります。
 
 ```Shell
 git clone https://github.com/NwHub/youtube-api.git -b skeleton
 ```
 
-クローンしたプロジェクトに移動
+1. クローンしたプロジェクトに移動
 
 ```Shell
 cd youtube-api
 ```
 
-`npm install`でパッケージダウンロード
+1. `npm install`でパッケージダウンロード
 
 ```shell
 npm install
 ```
 
+1. プロジェクトの状態
+```
+.
+├── mock
+│   └── db.json               --- Mockサーバーの設定
+├── package-lock.json         --- npm の設定ファイル
+├── package.json              --- npm の設定ファイル
+└── src
+    ├── repository
+    │   ├── YouTubeApi.js     --- YouTubeApiにアクセスするコード
+    ├── service
+    │   └── YouTubeService.js --- YouTubeApiから返却されたデータを必要な形に整形するコード（今回ここを修正する）
+    └── youtube.js            --- 
+```
 ---
 
-### Axios の導入
+### lesson02 - Mock サーバー（json-server）の立ち上げ -
 
-今回は YouTubeAPI に接続するために `Axios`というパッケージを使います。  
-プロジェクトルートで`npm install axios`を実行してインストールしましょう。
+YouTubeApi はクォータと呼ばれる使用制限があるため、何度も接続すると 1 日のインターバルが発生します。  
+しかし開発中は何度も接続する必要がでてきます。
 
-```Shell
-npm install axios
-```
+そこで簡単にサーバーを立ち上げることが出来る`json-server` を利用して、モックデータを取得するようにすることで解決します。
 
-`package.json`を確認すると導入されたことが確認できる  
-![image](https://user-images.githubusercontent.com/1374058/129496891-c7d69f32-1494-4e9e-b113-96aba5e232ab.png)
-
-```json
-"dependencies": {
-    "axios": "^0.21.1"
-}
-```
-
-これだけで`Axios`のパッケージが導入されます、すごいですね。
-
-##### メモ：
-
-- 使用する技術
-  - [node](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#nodejs%E3%83%8E%E3%83%BC%E3%83%89-%E3%81%A8%E3%81%AF)
-  - [npm](https://github.com/NwHub/newcomer-training/wiki/02_JavaScript%E7%92%B0%E5%A2%83%E5%91%A8%E3%82%8A#npm-%E3%81%A8%E3%81%AF)
-- 公式ページ
-  - [Axios](https://axios-http.com/)
-
----
-
-### API に接続
-
-早速 YouTubeAPI と疎通してみましょう。
-
-- `src/youtube.js`を作成し、コードを貼り付け
-- `API_KEY`に別途配布している Token を設定
-- 自動的に保存にチェックを忘れずに
-
-```shell
-touch src/youtube.js
-```
-
-#### src/youtube.js
-
-```javascript
-// axiosパッケージ読込
-const axios = require("axios");
-
-// YouTube API KEY
-const API_KEY = "";
-const MAX_RESULTS = 50;
-
-// async-awaitについてはあまり深く考えない方向で
-async function getChannelInfo(videoId) {
-  try {
-    const response = await axios.get(
-      `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
-    );
-    console.log(response.data);
-    // こうすると全ての構造を確認できる
-    // console.log(JSON.stringify(response.data, null, 2));
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-const videoId = "2dldq7XQdIo";
-getChannelInfo(videoId);
-```
-
-##### メモ：
-
-- 使用する技術
-  - [パッケージ読込](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E8%AA%AD%E8%BE%BC)
-  - [変数](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E5%A4%89%E6%95%B0)
-  - [文字列結合](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#%E6%96%87%E5%AD%97%E5%88%97%E7%B5%90%E5%90%88)
-  - console.log
-  - [async/await](https://github.com/NwHub/newcomer-training/wiki/03_JavaScript%E5%85%A5%E9%96%80#asyncawait)
-
----
-
-### 実行
-
-正しく取れるか確認しましょう。
-
-```Shell
-node src/youtube.js
-```
-
----
-
-### コードフォーマット
-
-今回 DaaS（Desktop As A Service）を利用する関係でコードの整形が難しいという問題があります。  
-手動でスペースを入れたり、タブを入れたるするのは考えられないので、`prettier`というパッケージを利用します。  
-設定は済ませてあるので、下記のコマンドを実行しコードフォーマットを実施します。
-ちなみに`package.json`の scripts の項目に設定が書いてあります。
-
-```shell
-npm run format
-```
-
-##### メモ
-
-- 公式
-  - [prettier](https://prettier.io/)
-
----
-
-### 基本となる URL を切り出し
-
-コードを修正して可読性を上げましょう。  
-ごちゃっとしたコードはそれだけでバグの温床になってしまいます。
-
-まずは接続 URL のホスト部分を変数で切り出しましょう。
-
-```javascript
-// axiosパッケージ読込
-const axios = require("axios");
-
-// YouTube API KEY
-const API_KEY = "";
-const MAX_RESULTS = 50;
-// 切出し
-const BASE_URL = "https://www.googleapis.com/youtube/v3";
-
-async function getChannelInfo(videoId) {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/videos?key=${API_KEY}&id=${videoId}&part=snippet&maxResults=1`
-    );
-    console.log(response.data);
-    // こうすると全ての構造を確認できる
-    // console.log(JSON.stringify(response.data, null, 2));
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-const videoId = "2dldq7XQdIo";
-getChannelInfo(videoId);
-```
-
-### フォーマット＆実行
-
-```zsh
-npm run format && node src/youtube.js
-```
-
----
-
-### クエリパラメータの引数化
-
-`axios`はクエリパラメータ（?〜の部分）を`{ params:{ { key : value} }`の形で axios の第二引数として与えることができます。
-
-```javascript
-// axiosパッケージ読込
-const axios = require("axios");
-
-// YouTube API KEY
-const API_KEY = "";
-const MAX_RESULTS = 50;
-const BASE_URL = "https://www.googleapis.com/youtube/v3";
-
-async function getChannelInfo(videoId) {
-  try {
-    // 引数をパラメータ化
-    const response = await axios.get(`${BASE_URL}/videos`, {
-      params: {
-        key: API_KEY,
-        id: videoId,
-        part: "snippet",
-        maxResults: 1,
-      },
-    });
-    console.log(response.data);
-    // こうすると全ての構造を確認できる
-    // console.log(JSON.stringify(response.data, null, 2));
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-const videoId = "2dldq7XQdIo";
-getChannelInfo(videoId);
-```
-
-### フォーマット＆実行
-
-```Shell
-npm run format && node src/youtube.js
-```
-
----
-
-### json-server を使用する
-
-YouTubeApi はクォータと呼ばれる使用制限があるため、YouTubeAPI に何度も接続すると 1 日のインターバルが発生します。  
-しかし開発中は何度も接続する必要がでてきます。  
-そこで簡単にサーバーを立ち上げることが出来る`json-server` を利用して、モックデータを取得するようにすることで解決します。  
 本当に簡易的に作っているので、id での検索などはできず、常に同じものが返ってきますが、とりあえず用は足ります。（必要に応じて YouTube 本番に繋げましょう）
 
-例によって設定はしておいたので`新しく違うターミナルを立ち上げて`、json-server を起動してみましょう。
+1. `json-server`の設定はしてあるので、`新しく違うターミナルを立ち上げて`json-server を起動してみましょう。
 
 ```shell
-cd youtube-api
 npm run json-server
 ```
 
-接続先を変更しましょう
+`json-server`を起動したターミナルはサーバー専用として、このまま放っておきます。(手元でサーバーを作ったイメージ)
 
-```javascript
-// axiosパッケージ読込
-const axios = require("axios");
+1. lesson01 でプロジェクトを作成したターミナルに戻って、以下のコマンドを実行しサーバーが正常に動作しているか確認しましょう。
 
-// YouTube API KEY
-const API_KEY = "";
-const MAX_RESULTS = 50;
-const BASE_URL = "http://localhost:3000";
-// const BASE_URL = "https://www.googleapis.com/youtube/v3";
-
-async function getChannelInfo(videoId) {
-  try {
-    // 引数をパラメータ化
-    const response = await axios.get(`${BASE_URL}/videos`, {
-      params: {
-        key: API_KEY,
-        id: videoId,
-        part: "snippet",
-        maxResults: 1,
-      },
-    });
-    console.log(response.data);
-    // こうすると全ての構造を確認できる
-    // console.log(JSON.stringify(response.data, null, 2));
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-const videoId = "2dldq7XQdIo";
-getChannelInfo(videoId);
+```shell
+curl http://localhost:3000/videos
 ```
 
-元のターミナルに戻って動作が（ほぼ）変わらないことを確認しましょう。
+こんな感じのが返ってくれば OK
 
-```Shell
-node src/youtube.js
+```json
+{
+  "kind": "youtube#videoListResponse",
+  "etag": "YLxySir_kgJmqTJ73l3ZkBzfjFc",
+  "items": [
+    {
+      "kind": "youtube#video",
+      "etag": "OX39KNazvW0pFLmQofjbnzoFeww"
+....
 ```
 
 ##### メモ
